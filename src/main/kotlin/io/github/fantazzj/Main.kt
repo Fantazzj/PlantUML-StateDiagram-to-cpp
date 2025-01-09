@@ -7,9 +7,11 @@ import net.sourceforge.plantuml.text.StringLocated
 import java.io.File
 
 fun main(args: Array<String>) {
+    val verbose = true
+
     val source = ArrayList<StringLocated>()
-    File(args[0]).forEachLine { line ->
-        source.add(StringLocated(line, null))
+    File(args[0]).forEachLine { l ->
+        source.add(StringLocated(l, null))
     }
 
     val umlSource = UmlSource.create(source, false)
@@ -17,14 +19,23 @@ fun main(args: Array<String>) {
     if (diagram !is StateDiagram)
         throw Exception("Given PlantUML is not a StateDiagram")
 
-    println("Leafs")
-    for (leaf in diagram.leafs())
-        println(" - ${leaf.name}")
-    val goodLinks = diagram.links.filter { l -> !l.isInverted }
-    val invertedLinks = diagram.links.filter { l -> l.isInverted }.map { l -> l.inv }
-    val rightLinks = goodLinks + invertedLinks
-    println("Links:")
-    for (link in rightLinks)
-        println(" - ${link.entity1.name} -> ${link.entity2.name}")
-    return
+    val leafs = diagram.leafs()
+    if (verbose) {
+        println("States:")
+        leafs.forEach { l ->
+            println(" - ${l.name}")
+            println(" - \t${l.bodier.rawBody}")
+        }
+    }
+
+    val links = diagram.links.map { l ->
+        if (l.isInverted) l.inv
+        else l
+    }
+    if (verbose) {
+        println("Transitions:")
+        links.forEach { l ->
+            println(" - ${l.entity1.name} --${l.label}-> ${l.entity2.name}")
+        }
+    }
 }
