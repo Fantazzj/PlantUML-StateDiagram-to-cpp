@@ -6,4 +6,8 @@ class Action(private val action: String) {
         return action
     }
 
+    fun getAction(): String {
+        return action
+    }
+
 }

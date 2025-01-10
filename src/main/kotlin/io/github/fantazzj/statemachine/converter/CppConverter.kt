@@ -6,7 +6,7 @@ import java.nio.file.Paths
 import kotlin.io.path.createDirectory
 import kotlin.io.path.exists
 
-class CppConverter(private val name: String, private val states: List<State>) : Converter {
+class CppConverter(private val name: String, private val states: Collection<State>) : Converter {
 
     override fun saveToDir(dirName: String) {
         val path = Paths.get(dirName)

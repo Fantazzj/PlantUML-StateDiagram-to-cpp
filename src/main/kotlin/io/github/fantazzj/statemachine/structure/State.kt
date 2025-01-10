@@ -2,11 +2,17 @@ package io.github.fantazzj.statemachine.structure
 
 class State(private val name: String) {
 
+    private val transitions = ArrayList<Transition>()
+
+    private val actions = ArrayList<Action>()
+
     fun getName(): String {
         return name
     }
 
-    private val transitions = ArrayList<Transition>()
+    fun getTransitions(): List<Transition> {
+        return transitions
+    }
 
     fun addTransition(transition: Transition) {
         transitions.add(transition)
@@ -16,7 +22,9 @@ class State(private val name: String) {
         addTransition(Transition(to, condition))
     }
 
-    private val actions = ArrayList<Action>()
+    fun getActions(): List<Action> {
+        return actions
+    }
 
     fun addAction(action: Action) {
         actions.add(action)
