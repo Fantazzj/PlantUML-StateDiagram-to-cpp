@@ -1,16 +1,18 @@
 package io.github.fantazzj.statemachine.structure
 
+import java.util.HashSet
+
 class State(private val name: String) {
 
-    private val transitions = ArrayList<Transition>()
+    private val transitions = HashSet<Transition>()
 
-    private val actions = ArrayList<Action>()
+    private val actions = HashSet<Action>()
 
     fun getName(): String {
         return name
     }
 
-    fun getTransitions(): List<Transition> {
+    fun getTransitions(): Set<Transition> {
         return transitions
     }
 
@@ -22,7 +24,7 @@ class State(private val name: String) {
         addTransition(Transition(to, condition))
     }
 
-    fun getActions(): List<Action> {
+    fun getActions(): Set<Action> {
         return actions
     }
 
