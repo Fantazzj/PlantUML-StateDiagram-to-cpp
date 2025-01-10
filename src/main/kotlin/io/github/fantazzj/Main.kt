@@ -3,11 +3,14 @@ package io.github.fantazzj
 import io.github.fantazzj.statemachine.converter.Converter
 import io.github.fantazzj.statemachine.converter.CppConverter
 import io.github.fantazzj.statemachine.structure.State
+import net.sourceforge.plantuml.abel.Entity
+import net.sourceforge.plantuml.abel.Link
 import net.sourceforge.plantuml.core.UmlSource
 import net.sourceforge.plantuml.statediagram.StateDiagram
 import net.sourceforge.plantuml.statediagram.StateDiagramFactory
 import net.sourceforge.plantuml.text.StringLocated
 import java.io.File
+import java.util.TreeSet
 
 fun readFile(fileName: String): ArrayList<StringLocated> {
     val source = ArrayList<StringLocated>()
@@ -25,6 +28,18 @@ fun plantUmlParse(source: ArrayList<StringLocated>): StateDiagram {
     return diagram
 }
 
+fun plantUmlLog(links: List<Link>, leafs: Collection<Entity>) {
+    println("States:")
+    leafs.forEach { l ->
+        println(" - ${l.name}")
+        println(" - \t${l.bodier.rawBody}")
+    }
+    println("Transitions:")
+    links.forEach { l ->
+        println(" - ${l.entity1.name} --${l.label}-> ${l.entity2.name}")
+    }
+}
+
 fun main(args: Array<String>) {
     val verbose = args.contains("--verbose") or args.contains("-v")
 
@@ -35,17 +50,6 @@ fun main(args: Array<String>) {
     val links = diagram.links.map { l ->
         if (l.isInverted) l.inv
         else l
-    }
-    if (verbose) {
-        println("States:")
-        leafs.forEach { l ->
-            println(" - ${l.name}")
-            println(" - \t${l.bodier.rawBody}")
-        }
-        println("Transitions:")
-        links.forEach { l ->
-            println(" - ${l.entity1.name} --${l.label}-> ${l.entity2.name}")
-        }
     }
 
     val states = ArrayList<State>()
