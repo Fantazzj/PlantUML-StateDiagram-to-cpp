@@ -2,7 +2,7 @@ package io.github.fantazzj
 
 class State(private val name: String) {
 
-    fun getName() : String {
+    fun getName(): String {
         return name
     }
 
@@ -13,7 +13,7 @@ class State(private val name: String) {
     }
 
     fun addTransition(to: String, condition: String) {
-        transitions.add(Transition(to, condition))
+        addTransition(Transition(to, condition))
     }
 
     private val actions = ArrayList<Action>()
@@ -23,7 +23,7 @@ class State(private val name: String) {
     }
 
     fun addAction(action: String) {
-        actions.add(Action(action))
+        addAction(Action(action))
     }
 
     override fun toString(): String {
