@@ -1,4 +1,4 @@
-package io.github.fantazzj
+package io.github.fantazzj.statemachine.structure
 
 class Action(private val action: String) {
 

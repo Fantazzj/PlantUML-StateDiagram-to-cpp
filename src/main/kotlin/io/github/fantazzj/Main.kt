@@ -1,5 +1,8 @@
 package io.github.fantazzj
 
+import io.github.fantazzj.statemachine.converter.Converter
+import io.github.fantazzj.statemachine.converter.CppConverter
+import io.github.fantazzj.statemachine.structure.State
 import net.sourceforge.plantuml.core.UmlSource
 import net.sourceforge.plantuml.statediagram.StateDiagram
 import net.sourceforge.plantuml.statediagram.StateDiagramFactory
@@ -64,6 +67,9 @@ fun main(args: Array<String>) {
         }
     }
 
-    if(verbose) states.forEach(::println)
+    if (verbose) states.forEach(::println)
+
+    val converter: Converter = CppConverter("easy", states)
+    converter.saveToDir("D:/Progetti/plantuml-1.2024.8/diagram-test/easy")
 
 }
