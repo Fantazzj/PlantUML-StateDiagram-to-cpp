@@ -28,12 +28,12 @@ fun plantUmlParse(source: ArrayList<StringLocated>): StateDiagram {
 }
 
 fun plantUmlLog(links: List<Link>, leafs: Collection<Entity>) {
-    println("States:")
+    println("Parsed states by PlantUML:")
     leafs.forEach { l ->
         println(" - ${l.name}")
         println(" - \t${l.bodier.rawBody}")
     }
-    println("Transitions:")
+    println("Parsed transitions by PlantUML:")
     links.forEach { l ->
         println(" - ${l.entity1.name} --${l.label}-> ${l.entity2.name}")
     }
@@ -41,6 +41,14 @@ fun plantUmlLog(links: List<Link>, leafs: Collection<Entity>) {
 
 fun main(args: Array<String>) {
     val verbose = args.contains("--verbose") or args.contains("-v")
+
+    val inputFile = args[0]
+    if (verbose) println("Input file is \"$inputFile\"")
+    if (!inputFile.contains(Regex("(\\.puml|\\.plantuml|\\.uml)")))
+        throw Exception("Given file is not a plantuml file")
+
+    val outputDir = args[0].replace(Regex("(\\.puml|\\.plantuml|\\.uml)"), "")
+    if (verbose) println("Converted files will be saved in: \"$outputDir\"")
 
     val source = readFile(args[0])
     val diagram = plantUmlParse(source)
@@ -72,7 +80,10 @@ fun main(args: Array<String>) {
         }
     }
 
-    if (verbose) states.forEach(::println)
+    if (verbose) {
+        println("States in converter's view:")
+        states.forEach(::println)
+    }
 
     val converter: Converter = CppConverter("easy", states)
     converter.saveToDir("D:/Progetti/plantuml-1.2024.8/diagram-test/easy")
