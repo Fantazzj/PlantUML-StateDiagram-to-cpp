@@ -22,12 +22,19 @@ class CppConverter(private val name: String, private val states: Collection<Stat
 
     private fun addCppContent(cppFile: File) =
         cppFile.bufferedWriter().use { out ->
-            out.write("AAAAA")
+            out.write("#include \"$name.hpp\"")
         }
 
     private fun addHppContent(hppFile: File) =
         hppFile.bufferedWriter().use { out ->
-            out.write("AAAAA")
+            out.write("#ifndef ${name.uppercase()}_HPP\n")
+            out.write("#define ${name.uppercase()}_HPP\n")
+            out.newLine()
+            out.write("class $name {\n")
+            out.newLine()
+            out.write("};\n")
+            out.newLine()
+            out.write("#endif\n")
         }
 
 }
