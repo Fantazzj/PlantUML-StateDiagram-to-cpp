@@ -23,7 +23,7 @@ fun plantUmlParse(source: ArrayList<StringLocated>): StateDiagram {
 }
 
 fun main(args: Array<String>) {
-    val showPlantUmlParsedData = true
+    val verbose = args.contains("--verbose") or args.contains("-v")
 
     val source = readFile(args[0])
     val diagram = plantUmlParse(source)
@@ -33,7 +33,7 @@ fun main(args: Array<String>) {
         if (l.isInverted) l.inv
         else l
     }
-    if (showPlantUmlParsedData) {
+    if (verbose) {
         println("States:")
         leafs.forEach { l ->
             println(" - ${l.name}")
@@ -64,6 +64,6 @@ fun main(args: Array<String>) {
         }
     }
 
-    states.forEach(::println)
+    if(verbose) states.forEach(::println)
 
 }
