@@ -10,7 +10,6 @@ import net.sourceforge.plantuml.statediagram.StateDiagram
 import net.sourceforge.plantuml.statediagram.StateDiagramFactory
 import net.sourceforge.plantuml.text.StringLocated
 import java.io.File
-import java.util.TreeSet
 
 fun readFile(fileName: String): ArrayList<StringLocated> {
     val source = ArrayList<StringLocated>()
@@ -51,6 +50,8 @@ fun main(args: Array<String>) {
         if (l.isInverted) l.inv
         else l
     }
+
+    if (verbose) plantUmlLog(links, leafs)
 
     val states = ArrayList<State>()
     leafs.forEach { l ->
