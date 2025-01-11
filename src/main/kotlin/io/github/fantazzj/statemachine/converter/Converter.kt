@@ -1,7 +1,9 @@
 package io.github.fantazzj.statemachine.converter
 
+import java.nio.file.Path
+
 interface Converter {
 
-    fun saveToDir(dirName: String)
+    fun saveToDir(outDir: Path)
 
 }

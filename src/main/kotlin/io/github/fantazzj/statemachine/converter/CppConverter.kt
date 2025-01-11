@@ -3,18 +3,18 @@ package io.github.fantazzj.statemachine.converter
 import io.github.fantazzj.statemachine.structure.State
 import java.io.File
 import java.io.PrintWriter
+import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.createDirectory
 import kotlin.io.path.exists
 
 class CppConverter(private val name: String, private val states: Collection<State>) : Converter {
 
-    override fun saveToDir(dirName: String) {
-        val path = Paths.get(dirName)
-        if (!path.exists())
-            path.createDirectory()
-        val hppFile = File("$dirName/$name.hpp")
-        val cppFile = File("$dirName/$name.cpp")
+    override fun saveToDir(outDir: Path) {
+        if (!outDir.exists())
+            outDir.createDirectory()
+        val hppFile = File("$outDir/$name.hpp")
+        val cppFile = File("$outDir/$name.cpp")
         hppFile.createNewFile()
         cppFile.createNewFile()
         addCppContent(cppFile)

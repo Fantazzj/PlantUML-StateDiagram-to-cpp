@@ -14,6 +14,7 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib"))
     implementation(files("lib/plantuml-1.2024.8.jar"))
+    implementation("com.github.ajalt.clikt:clikt:5.0.2")
     testImplementation(kotlin("test"))
 }
 

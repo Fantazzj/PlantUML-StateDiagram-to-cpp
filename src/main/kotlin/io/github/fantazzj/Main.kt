@@ -1,5 +1,11 @@
 package io.github.fantazzj
 
+import com.github.ajalt.clikt.core.*
+import com.github.ajalt.clikt.parameters.arguments.argument
+import com.github.ajalt.clikt.parameters.arguments.check
+import com.github.ajalt.clikt.parameters.options.*
+import com.github.ajalt.clikt.parameters.types.file
+import com.github.ajalt.clikt.parameters.types.path
 import io.github.fantazzj.statemachine.converter.Converter
 import io.github.fantazzj.statemachine.converter.CppConverter
 import io.github.fantazzj.statemachine.structure.State
@@ -11,10 +17,12 @@ import net.sourceforge.plantuml.statediagram.StateDiagram
 import net.sourceforge.plantuml.statediagram.StateDiagramFactory
 import net.sourceforge.plantuml.text.StringLocated
 import java.io.File
+import java.nio.file.Path
+import java.nio.file.Paths
 
-fun readFile(fileName: String): ArrayList<StringLocated> {
+fun readFile(inputFile: File): ArrayList<StringLocated> {
     val source = ArrayList<StringLocated>()
-    File(fileName).forEachLine { l ->
+    inputFile.forEachLine { l ->
         source.add(StringLocated(l, null))
     }
     return source
@@ -40,55 +48,64 @@ fun plantUmlLog(links: List<Link>, leafs: Collection<Entity>) {
     }
 }
 
-fun main(args: Array<String>) {
-    val verbose = args.contains("--verbose") or args.contains("-v")
-
-    val inputFile = args[0]
-    if (verbose) println("Input file is \"$inputFile\"")
-    if (!inputFile.contains(Regex("(\\.puml|\\.plantuml|\\.uml)")))
-        throw Exception("Given file is not a plantuml file")
-
-    val outputDir = args[0].replace(Regex("(\\.puml|\\.plantuml|\\.uml)"), "")
-    if (verbose) println("Converted files will be saved in: \"$outputDir\"")
-
-    val source = readFile(args[0])
-    val diagram = plantUmlParse(source)
-
-    val leafs = diagram.leafs()
-    val links = diagram.links.map { l ->
-        if (l.isInverted) l.inv
-        else l
+class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
+    private val inputFile by argument(help = "input PlantUML file (needs correct extension)").file(
+        mustExist = true,
+        canBeDir = false
+    ).check { f ->
+        f.name.contains(Regex("(\\.puml|\\.plantuml|\\.uml)"))
     }
+    private val verbose by option("-v", "--verbose", help = "print all information").flag()
+    private val nullableOutputDir by option("-o", "--output", help = "path to output folder").path()
 
-    if (verbose) plantUmlLog(links, leafs)
+    override fun run() {
+        if (verbose) println("Input file is \"$inputFile\"")
 
-    val states = ArrayList<State>()
-    leafs.forEach { l ->
-        val state = State(l.name)
-        l.bodier.rawBody.forEach { b ->
-            state.addAction(b.toString())
+        val source = readFile(inputFile)
+        val diagram = plantUmlParse(source)
+
+        val leafs = diagram.leafs()
+        val links = diagram.links.map { l ->
+            if (l.isInverted) l.inv
+            else l
         }
-        states.add(state)
-    }
-    links.forEach { l ->
-        states.forEach { s ->
-            if (l.entity1.name == s.getName())
-                s.addTransition(
-                    l.entity2.name,
-                    if (l.label.size() > 0) l.label.get(0).toString()
-                    else "true"
-                )
+
+        if (verbose) plantUmlLog(links, leafs)
+
+        val states = ArrayList<State>()
+        leafs.forEach { l ->
+            val state = State(l.name)
+            l.bodier.rawBody.forEach { b ->
+                state.addAction(b.toString())
+            }
+            states.add(state)
         }
+        links.forEach { l ->
+            states.forEach { s ->
+                if (l.entity1.name == s.getName())
+                    s.addTransition(
+                        l.entity2.name,
+                        if (l.label.size() > 0) l.label.get(0).toString()
+                        else "true"
+                    )
+            }
+        }
+
+        if (verbose) {
+            println("States in converter's view:")
+            states.forEach(::println)
+        }
+
+        val outputDir =
+            nullableOutputDir ?: Paths.get(inputFile.absolutePath.replace(Regex("(\\.puml|\\.plantuml|\\.uml)"), ""))
+
+        if (verbose) println("Converted files will be saved in: \"$outputDir\"")
+        val converter: Converter = CppConverter("easy", states)
+        converter.saveToDir(outputDir)
+
+        Run.main(arrayOf(inputFile.absolutePath))
     }
-
-    if (verbose) {
-        println("States in converter's view:")
-        states.forEach(::println)
-    }
-
-    val converter: Converter = CppConverter("easy", states)
-    converter.saveToDir("D:/Progetti/plantuml-1.2024.8/diagram-test/easy")
-
-    Run.main(arrayOf(inputFile))
 
 }
+
+fun main(args: Array<String>) = Main().main(args)
