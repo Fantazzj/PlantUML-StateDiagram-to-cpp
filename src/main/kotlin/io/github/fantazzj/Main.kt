@@ -3,6 +3,7 @@ package io.github.fantazzj
 import io.github.fantazzj.statemachine.converter.Converter
 import io.github.fantazzj.statemachine.converter.CppConverter
 import io.github.fantazzj.statemachine.structure.State
+import net.sourceforge.plantuml.Run
 import net.sourceforge.plantuml.abel.Entity
 import net.sourceforge.plantuml.abel.Link
 import net.sourceforge.plantuml.core.UmlSource
@@ -87,5 +88,7 @@ fun main(args: Array<String>) {
 
     val converter: Converter = CppConverter("easy", states)
     converter.saveToDir("D:/Progetti/plantuml-1.2024.8/diagram-test/easy")
+
+    Run.main(arrayOf(inputFile))
 
 }
