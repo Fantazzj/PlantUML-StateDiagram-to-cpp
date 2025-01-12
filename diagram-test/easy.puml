@@ -1,0 +1,14 @@
+@startuml
+hide empty description
+
+state Opening : handState = Open
+state Opening : statoMano = Aperto
+state Closing : handState = Grab
+
+[*] -down-> Opening
+
+Opening -down-> Closing : azzardo==vero
+
+BlockOpen -up-> Opening : hazard==false
+
+@enduml
