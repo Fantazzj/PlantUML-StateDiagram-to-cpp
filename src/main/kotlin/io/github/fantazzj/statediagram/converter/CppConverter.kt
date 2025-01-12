@@ -1,6 +1,6 @@
-package io.github.fantazzj.statemachine.converter
+package io.github.fantazzj.statediagram.converter
 
-import io.github.fantazzj.statemachine.structure.State
+import io.github.fantazzj.statediagram.structure.State
 import java.io.File
 import java.io.PrintWriter
 import java.nio.file.Path

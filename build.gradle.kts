@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "io.github.fantazzj"
-description = "PlantUML-StateMachine-to-cpp"
+description = "PlantUML-StateDiagram-to-cpp"
 version = "1.0-SNAPSHOT"
 
 repositories {

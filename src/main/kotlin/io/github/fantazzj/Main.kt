@@ -6,9 +6,9 @@ import com.github.ajalt.clikt.parameters.arguments.check
 import com.github.ajalt.clikt.parameters.options.*
 import com.github.ajalt.clikt.parameters.types.file
 import com.github.ajalt.clikt.parameters.types.path
-import io.github.fantazzj.statemachine.converter.Converter
-import io.github.fantazzj.statemachine.converter.CppConverter
-import io.github.fantazzj.statemachine.structure.State
+import io.github.fantazzj.statediagram.converter.Converter
+import io.github.fantazzj.statediagram.converter.CppConverter
+import io.github.fantazzj.statediagram.structure.State
 import net.sourceforge.plantuml.Run
 import net.sourceforge.plantuml.abel.Entity
 import net.sourceforge.plantuml.abel.Link

@@ -1,4 +1,4 @@
-package io.github.fantazzj.statemachine.converter
+package io.github.fantazzj.statediagram.converter
 
 import java.nio.file.Path
 

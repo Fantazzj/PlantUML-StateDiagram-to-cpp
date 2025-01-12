@@ -1,4 +1,4 @@
-package io.github.fantazzj.statemachine.structure
+package io.github.fantazzj.statediagram.structure
 
 class Transition(private val to: String, private val condition: String) {
 
