@@ -15,11 +15,28 @@ class CppConverter(private val name: String, private val states: Collection<Stat
             outDir.createDirectory()
         val hppFile = File("$outDir/$name.hpp")
         val cppFile = File("$outDir/$name.cpp")
+        val enumFile = File("$outDir/$name" + "Enum.hpp")
         hppFile.createNewFile()
         cppFile.createNewFile()
+        enumFile.createNewFile()
         addCppContent(cppFile)
         addHppContent(hppFile)
+        addEnumContent(enumFile)
     }
+
+    private fun addEnumContent(enumFile: File) =
+        enumFile.printWriter().use { out ->
+            out.println("#ifndef ${name.uppercase()}_ENUM_HPP")
+            out.println("#define ${name.uppercase()}_ENUM_HPP")
+            out.println()
+            out.println("enum State : int {")
+            for (state in states)
+                out.println("\t${state.getName()},")
+            out.println("};")
+            out.println()
+            out.println("#endif //${name.uppercase()}_ENUM_HPP\n")
+            out.println()
+        }
 
     private fun addCppContent(cppFile: File) =
         cppFile.printWriter().use { out ->
@@ -36,23 +53,47 @@ class CppConverter(private val name: String, private val states: Collection<Stat
         }
 
     private fun writeInclude(out: PrintWriter) {
-
+        out.println("#include \"$name.hpp\"")
     }
 
     private fun writeOutputAnalysis(out: PrintWriter) {
-
+        out.println("void $name::outputAnalysis() {")
+        out.println("\toldState = newState;")
+        out.println("\tswitch(newState) {")
+        for (state in states) {
+            out.println("\t\tcase ${state.getName()}:")
+            for (action in state.getActions())
+                out.println("\t\t\t${action.getAction()};")
+            out.println("\t\t\tbreak;")
+        }
+        //out.println("\t\tdefault:")
+        out.println("\t}")
+        out.println("}")
     }
 
     private fun writeConstructor(out: PrintWriter) {
-
+        out.println("$name::$name() {")
+        out.println("\tthis->newState = {FIRST_STATE};")
+        out.println("\tthis->elapsedMillis = 0;")
+        out.println("}")
     }
 
     private fun writeChangeState(out: PrintWriter) {
-
+        out.println("void $name::changeState(State newState) {{")
+        out.println("\tthis->newState = newState;")
+        out.println("\telapsedMillis = 0;")
+        out.println("\tpreviousMillis = Timer::milliseconds();")
+        out.println("}")
     }
 
     private fun writeAutoCycle(out: PrintWriter) {
-
+        out.println("void $name::autoCycle() {")
+        out.println("\telapsedMillis = Timer::milliseconds() - previousMillis;")
+        out.println("\tif( false ) ;")
+        for (state in states)
+            for (transition in state.getTransitions())
+                out.println("\telse if( (newState == ${state.getName()}) && (${transition.getCondition()}) ) changeState(${transition.getTo()});")
+        out.println("}")
     }
 
     private fun addHppContent(hppFile: File) =
@@ -81,10 +122,15 @@ class CppConverter(private val name: String, private val states: Collection<Stat
     }
 
     private fun includeFiles(out: PrintWriter) {
+        out.println("#include \"$name" + "Enum\".hpp")
+        //out.println("#include \"../Timer/Timer.hpp\"")
     }
 
     private fun publicMethods(out: PrintWriter) {
-
+        out.println("\t$name();")
+        out.println("\tvoid autoCycle();")
+        out.println("\tvoid outputAnalysis();")
+        out.println("\tState newState;")
     }
 
     private fun publicAttributes(out: PrintWriter) {
@@ -92,11 +138,13 @@ class CppConverter(private val name: String, private val states: Collection<Stat
     }
 
     private fun privateMethods(out: PrintWriter) {
-
+        out.println("\tvoid changeState(State step);")
     }
 
     private fun privateAttributes(out: PrintWriter) {
-
+        out.println("\tState oldState;")
+        out.println("\tunsigned long previousMillis;")
+        out.println("\tunsigned long elapsedMillis;")
     }
 
     private fun includeGuardsBottom(out: PrintWriter) {
