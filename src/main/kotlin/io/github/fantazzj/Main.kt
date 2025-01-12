@@ -103,7 +103,7 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
         val converter: Converter = CppConverter("easy", states)
         converter.saveToDir(outputDir)
 
-        Run.main(arrayOf(inputFile.absolutePath))
+        Run.main(arrayOf(inputFile.absolutePath, "-o", outputDir.toString()))
     }
 
 }
