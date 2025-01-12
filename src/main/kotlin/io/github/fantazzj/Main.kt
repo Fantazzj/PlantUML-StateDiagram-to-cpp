@@ -7,7 +7,7 @@ import com.github.ajalt.clikt.parameters.options.*
 import com.github.ajalt.clikt.parameters.types.file
 import com.github.ajalt.clikt.parameters.types.path
 import io.github.fantazzj.statediagram.converter.Converter
-import io.github.fantazzj.statediagram.converter.CppConverter
+import io.github.fantazzj.statediagram.converter.cxx.CxxConverter
 import io.github.fantazzj.statediagram.structure.State
 import net.sourceforge.plantuml.Run
 import net.sourceforge.plantuml.abel.Entity
@@ -99,7 +99,7 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
             nullableOutputDir ?: Paths.get(inputFile.absolutePath.replace(Regex("(\\.puml|\\.plantuml|\\.uml)"), ""))
 
         if (verbose) println("Converted files will be saved in: \"$outputDir\"")
-        val converter: Converter = CppConverter("easy", states)
+        val converter: Converter = CxxConverter("easy", states)
         converter.saveToDir(outputDir)
 
         Run.main(arrayOf(inputFile.absolutePath, "-o", outputDir.toString()))
