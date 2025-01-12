@@ -17,7 +17,6 @@ import net.sourceforge.plantuml.statediagram.StateDiagram
 import net.sourceforge.plantuml.statediagram.StateDiagramFactory
 import net.sourceforge.plantuml.text.StringLocated
 import java.io.File
-import java.nio.file.Path
 import java.nio.file.Paths
 
 fun readFile(inputFile: File): ArrayList<StringLocated> {

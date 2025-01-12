@@ -4,7 +4,6 @@ import io.github.fantazzj.statemachine.structure.State
 import java.io.File
 import java.io.PrintWriter
 import java.nio.file.Path
-import java.nio.file.Paths
 import kotlin.io.path.createDirectory
 import kotlin.io.path.exists
 
