@@ -5,25 +5,25 @@ import io.github.fantazzj.statediagram.structure.State
 import java.io.File
 import java.nio.file.Path
 
-class EnumConverter(private val name: String, private val states: Collection<State>) : Converter {
+class EnumConverter(name: String, states: Collection<State>) : Converter(name, states) {
 
     override fun saveToDir(outDir: Path) {
-        val enumFile = File("$outDir/$name" + "Enum.hpp")
+        val enumFile = File("$outDir/${getName()}" + "Enum.hpp")
         enumFile.createNewFile()
         addEnumContent(enumFile)
     }
 
     private fun addEnumContent(enumFile: File) =
         enumFile.printWriter().use { out ->
-            out.println("#ifndef ${name.uppercase()}_ENUM_HPP")
-            out.println("#define ${name.uppercase()}_ENUM_HPP")
+            out.println("#ifndef ${getName().uppercase()}_ENUM_HPP")
+            out.println("#define ${getName().uppercase()}_ENUM_HPP")
             out.println()
             out.println("enum State : int {")
-            for (state in states)
+            for (state in getStates())
                 out.println("\t${state.getName()},")
             out.println("};")
             out.println()
-            out.println("#endif //${name.uppercase()}_ENUM_HPP")
+            out.println("#endif //${getName().uppercase()}_ENUM_HPP")
         }
 
 }

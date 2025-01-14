@@ -8,10 +8,10 @@ import java.nio.file.Path
 import kotlin.io.path.createDirectory
 import kotlin.io.path.exists
 
-class CppConverter(private val name: String, private val states: Collection<State>) : Converter {
+class CppConverter(name: String, states: Collection<State>) : Converter(name, states) {
 
     override fun saveToDir(outDir: Path) {
-        val cppFile = File("$outDir/$name.cpp")
+        val cppFile = File("$outDir/${getName()}.cpp")
         cppFile.createNewFile()
         addCppContent(cppFile)
     }
@@ -31,14 +31,14 @@ class CppConverter(private val name: String, private val states: Collection<Stat
         }
 
     private fun writeInclude(out: PrintWriter) {
-        out.println("#include \"$name.hpp\"")
+        out.println("#include \"${getName()}.hpp\"")
     }
 
     private fun writeOutputAnalysis(out: PrintWriter) {
-        out.println("void $name::outputAnalysis() {")
+        out.println("void ${getName()}::outputAnalysis() {")
         out.println("\toldState = newState;")
         out.println("\tswitch(newState) {")
-        for (state in states) {
+        for (state in getStates()) {
             out.println("\t\tcase ${state.getName()}:")
             for (action in state.getActions())
                 out.println("\t\t\t${action.getAction()};")
@@ -50,14 +50,14 @@ class CppConverter(private val name: String, private val states: Collection<Stat
     }
 
     private fun writeConstructor(out: PrintWriter) {
-        out.println("$name::$name() {")
+        out.println("${getName()}::${getName()}() {")
         out.println("\tthis->newState = {FIRST_STATE};")
         out.println("\tthis->elapsedMillis = 0;")
         out.println("}")
     }
 
     private fun writeChangeState(out: PrintWriter) {
-        out.println("void $name::changeState(State newState) {{")
+        out.println("void ${getName()}::changeState(State newState) {{")
         out.println("\tthis->newState = newState;")
         out.println("\telapsedMillis = 0;")
         out.println("\tpreviousMillis = Timer::milliseconds();")
@@ -65,10 +65,10 @@ class CppConverter(private val name: String, private val states: Collection<Stat
     }
 
     private fun writeAutoCycle(out: PrintWriter) {
-        out.println("void $name::autoCycle() {")
+        out.println("void ${getName()}::autoCycle() {")
         out.println("\telapsedMillis = Timer::milliseconds() - previousMillis;")
         out.println("\tif( false ) ;")
-        for (state in states)
+        for (state in getStates())
             for (transition in state.getTransitions())
                 out.println("\telse if( (newState == ${state.getName()}) && (${transition.getCondition()}) ) changeState(${transition.getTo()});")
         out.println("}")

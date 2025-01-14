@@ -1,9 +1,14 @@
 package io.github.fantazzj.statediagram.converter
 
+import io.github.fantazzj.statediagram.structure.State
 import java.nio.file.Path
 
-interface Converter {
+abstract class Converter(private val name: String, private val states: Collection<State>) {
 
-    fun saveToDir(outDir: Path)
+    fun getName() = name
+
+    fun getStates() = states
+
+    abstract fun saveToDir(outDir: Path)
 
 }

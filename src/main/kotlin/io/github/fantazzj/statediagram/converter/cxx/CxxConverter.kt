@@ -6,7 +6,7 @@ import java.nio.file.Path
 import kotlin.io.path.createDirectory
 import kotlin.io.path.exists
 
-class CxxConverter(private val name: String, private val states: Collection<State>) : Converter {
+class CxxConverter(name: String, states: Collection<State>) : Converter(name, states) {
 
     private val cppConverter = CppConverter(name, states)
     private val hppConverter = HppConverter(name, states)

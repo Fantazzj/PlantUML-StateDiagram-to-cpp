@@ -6,10 +6,10 @@ import java.nio.file.Path
 import java.io.File
 import java.io.PrintWriter
 
-class HppConverter(private val name: String, private val states: Collection<State>) : Converter {
+class HppConverter(name: String, states: Collection<State>) : Converter(name, states) {
 
     override fun saveToDir(outDir: Path) {
-        val hppFile = File("$outDir/$name.hpp")
+        val hppFile = File("$outDir/${getName()}.hpp")
         hppFile.createNewFile()
         addHppContent(hppFile)
     }
@@ -20,7 +20,7 @@ class HppConverter(private val name: String, private val states: Collection<Stat
             out.println()
             includeFiles(out)
             out.println()
-            out.println("class $name {")
+            out.println("class ${getName()} {")
             out.println("public:")
             publicMethods(out)
             publicAttributes(out)
@@ -35,17 +35,17 @@ class HppConverter(private val name: String, private val states: Collection<Stat
         }
 
     private fun includeGuardsTop(out: PrintWriter) {
-        out.println("#ifndef ${name.uppercase()}_HPP")
-        out.println("#define ${name.uppercase()}_HPP")
+        out.println("#ifndef ${getName().uppercase()}_HPP")
+        out.println("#define ${getName().uppercase()}_HPP")
     }
 
     private fun includeFiles(out: PrintWriter) {
-        out.println("#include \"$name" + "Enum\".hpp")
+        out.println("#include \"${getName()}" + "Enum\".hpp")
         //out.println("#include \"../Timer/Timer.hpp\"")
     }
 
     private fun publicMethods(out: PrintWriter) {
-        out.println("\t$name();")
+        out.println("\t${getName()}();")
         out.println("\tvoid autoCycle();")
         out.println("\tvoid outputAnalysis();")
         out.println("\tState newState;")
@@ -66,7 +66,7 @@ class HppConverter(private val name: String, private val states: Collection<Stat
     }
 
     private fun includeGuardsBottom(out: PrintWriter) {
-        out.println("#endif//${name.uppercase()}_HPP")
+        out.println("#endif//${getName().uppercase()}_HPP")
     }
-    
+
 }
