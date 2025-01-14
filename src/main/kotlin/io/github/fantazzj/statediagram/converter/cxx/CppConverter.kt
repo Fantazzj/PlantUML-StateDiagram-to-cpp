@@ -51,7 +51,7 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
 
     private fun writeConstructor(out: PrintWriter) {
         out.println("${getName()}::${getName()}() {")
-        out.println("\tthis->newState = {FIRST_STATE};")
+        out.println("\tthis->newState = ${getFirstState().getName()};")
         out.println("\tthis->elapsedMillis = 0;")
         out.println("}")
     }
