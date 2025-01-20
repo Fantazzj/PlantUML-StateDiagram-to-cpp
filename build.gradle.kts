@@ -1,11 +1,13 @@
 plugins {
     kotlin("jvm") version "2.0.20"
+    id("io.watling.gradle.launch4j") version "1.0.0"
+    java
     application
 }
 
 group = "io.github.fantazzj"
-description = "PlantUML-StateDiagram-to-cpp"
-version = "1.0-SNAPSHOT"
+description = rootProject.name
+version = "0.1"
 
 repositories {
     mavenCentral()
@@ -13,7 +15,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation(files("lib/plantuml-1.2024.8.jar"))
+    implementation(files("lib/plantuml-1.2025.0.jar"))
     implementation("com.github.ajalt.clikt:clikt:5.0.2")
     testImplementation(kotlin("test"))
 }
@@ -26,6 +28,14 @@ kotlin {
     jvmToolchain(21)
 }
 
-application {
-    mainClass = "io.github.fantazzj.MainKt"
+tasks.withType<Jar> {
+    manifest {
+        attributes["Main-Class"] = "io.github.fantazzj.MainKt"
+        attributes["Class-Path"] = configurations.runtimeClasspath.get().joinToString(separator = " ") { f -> f.name }
+        println(attributes["Class-Path"])
+    }
+}
+
+launch4j {
+    configFile = "launch4j/launch4j.xml"
 }
