@@ -55,6 +55,7 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
         f.name.contains(Regex("(\\.puml|\\.plantuml|\\.uml)"))
     }
     private val verbose by option("-v", "--verbose", help = "print all information").flag()
+    private val outputImage by option("--image", help = "create also a png image of the diagram").flag()
     private val nullableOutputDir by option("-o", "--output", help = "path to output folder").path()
 
     override fun run() {
@@ -102,7 +103,8 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
         val converter: Converter = CxxConverter("easy", states)
         converter.saveToDir(outputDir)
 
-        Run.main(arrayOf(inputFile.absolutePath, "-o", outputDir.toString()))
+        if (outputImage)
+            Run.main(arrayOf(inputFile.absolutePath, "-o", outputDir.toString()))
     }
 
 }
