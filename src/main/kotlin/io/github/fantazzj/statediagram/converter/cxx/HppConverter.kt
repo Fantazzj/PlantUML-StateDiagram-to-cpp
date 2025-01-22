@@ -40,7 +40,7 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
     }
 
     private fun includeFiles(out: PrintWriter) {
-        out.println("#include \"${getName()}" + "Enum\".hpp")
+        out.println("#include \"${getName()}" + "Enum.hpp\"")
         //out.println("#include \"../Timer/Timer.hpp\"")
     }
 

@@ -5,8 +5,6 @@ import io.github.fantazzj.statediagram.structure.State
 import java.io.File
 import java.io.PrintWriter
 import java.nio.file.Path
-import kotlin.io.path.createDirectory
-import kotlin.io.path.exists
 
 class CppConverter(name: String, states: Collection<State>) : Converter(name, states) {
 
@@ -57,7 +55,7 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
     }
 
     private fun writeChangeState(out: PrintWriter) {
-        out.println("void ${getName()}::changeState(State newState) {{")
+        out.println("void ${getName()}::changeState(State newState) {")
         out.println("\tthis->newState = newState;")
         out.println("\telapsedMillis = 0;")
         out.println("\tpreviousMillis = Timer::milliseconds();")
