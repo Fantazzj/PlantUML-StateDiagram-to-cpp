@@ -64,7 +64,8 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
         val source = readFile(inputFile)
         val diagram = plantUmlParse(source)
 
-        val leafs = diagram.leafs()
+        //val leafs = diagram.leafs()
+        val leafs = diagram.currentGroup.leafs()
         val links = diagram.links.map { l ->
             if (l.isInverted) l.inv
             else l
