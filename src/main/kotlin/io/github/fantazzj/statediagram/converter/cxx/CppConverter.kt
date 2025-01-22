@@ -58,13 +58,13 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
         out.println("void ${getName()}::changeState(State newState) {")
         out.println("\tthis->newState = newState;")
         out.println("\telapsedMillis = 0;")
-        out.println("\tpreviousMillis = Timer::milliseconds();")
+        out.println("\tpreviousMillis = MILLISECONDS;")
         out.println("}")
     }
 
     private fun writeAutoCycle(out: PrintWriter) {
         out.println("void ${getName()}::autoCycle() {")
-        out.println("\telapsedMillis = Timer::milliseconds() - previousMillis;")
+        out.println("\telapsedMillis = MILLISECONDS - previousMillis;")
         out.println("\tif( false ) ;")
         for (state in getStates())
             for (transition in state.getTransitions())
