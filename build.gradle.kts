@@ -1,6 +1,6 @@
 plugins {
     kotlin("jvm") version "2.0.20"
-    id("io.watling.gradle.launch4j") version "1.0.0"
+    id("edu.sc.seis.launch4j") version "3.0.6"
     java
     application
 }
@@ -37,5 +37,15 @@ tasks.withType<Jar> {
 }
 
 launch4j {
-    configFile = "launch4j/launch4j.xml"
+    dontWrapJar = true
+    headerType = "console"
+    outfile = "plantuml-conv.exe"
+    priority = "normal"
+    stayAlive = false
+    restartOnCrash = false
+    icon = "${projectDir}/res/main.ico"
+    requires64Bit = false
+    requiresJdk = true
+    bundledJrePath = "jre"
+    downloadUrl = ""
 }
