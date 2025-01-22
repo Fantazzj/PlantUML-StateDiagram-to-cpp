@@ -52,7 +52,22 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
     }
 
     private fun publicAttributes(out: PrintWriter) {
+        val re = Regex("[A-Za-z]\\w*")
+        val variables = HashSet<String>()
+        val parseAndAdd = { text: String ->
+            re.findAll(text).forEach { m ->
+                if (m.value !in setOf("true", "false"))
+                    variables.add(m.value)
+            }
+        }
 
+        getStates().forEach { s ->
+            s.getTransitions().forEach { t -> parseAndAdd(t.getCondition()) }
+            s.getActions().forEach { a -> parseAndAdd(a.getAction()) }
+        }
+
+        for (v in variables)
+            out.println("\tint $v;")
     }
 
     private fun privateMethods(out: PrintWriter) {
