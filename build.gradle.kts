@@ -45,7 +45,7 @@ launch4j {
     restartOnCrash = false
     icon = "${projectDir}/res/main.ico"
     requires64Bit = false
-    requiresJdk = true
+    requiresJdk = false
     bundledJrePath = "jre"
     downloadUrl = ""
 }
