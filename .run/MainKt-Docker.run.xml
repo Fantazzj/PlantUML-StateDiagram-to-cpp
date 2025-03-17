@@ -1,9 +1,11 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="MainKt" type="JetRunConfigurationType" nameIsGenerated="true">
+  <configuration default="false" name="MainKt-Docker" type="JetRunConfigurationType">
     <option name="MAIN_CLASS_NAME" value="io.github.fantazzj.MainKt" />
     <module name="plantuml-statediagram-to-cpp.main" />
+    <option name="PROGRAM_PARAMETERS" value=".\diagram-test\easy.puml" />
     <target name="Docker" />
     <shortenClasspath name="NONE" />
+    <option name="WORKING_DIRECTORY" value="." />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>
