@@ -69,7 +69,7 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
         }
 
         variables.forEach { v ->
-            out.println("\tint $v;")
+            out.println("\tauto $v = ${v.uppercase()};")
         }
     }
 
