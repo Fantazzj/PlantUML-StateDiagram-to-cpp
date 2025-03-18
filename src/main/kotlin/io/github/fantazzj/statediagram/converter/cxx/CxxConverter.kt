@@ -11,6 +11,7 @@ class CxxConverter(name: String, states: Collection<State>) : Converter(name, st
     private val cppConverter = CppConverter(name, states)
     private val hppConverter = HppConverter(name, states)
     private val enumConverter = EnumConverter(name, states)
+    private val configConverter = ConfigConverter(name, states)
 
     override fun saveToDir(outDir: Path) {
         if (!outDir.exists())
@@ -18,6 +19,7 @@ class CxxConverter(name: String, states: Collection<State>) : Converter(name, st
         cppConverter.saveToDir(outDir)
         hppConverter.saveToDir(outDir)
         enumConverter.saveToDir(outDir)
+        configConverter.saveToDir(outDir)
     }
 
 }

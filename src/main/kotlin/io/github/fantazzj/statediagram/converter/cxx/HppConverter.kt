@@ -18,8 +18,6 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
         hppFile.printWriter().use { out ->
             includeGuardsTop(out)
             out.println()
-            defineHardwareSpecific(out)
-            out.println()
             includeFiles(out)
             out.println()
             out.println("class ${getName()} {")
@@ -41,16 +39,9 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
         out.println("#define ${getName().uppercase()}_HPP")
     }
 
-    private fun defineHardwareSpecific(out: PrintWriter) {
-        out.println("//for arduino:")
-        out.println("//#define MILLISECONDS millis()")
-        out.println("#ifndef MILLISECONDS")
-        out.println("#error \"didn't define the hardware specific MILLISECONDS function\"")
-        out.println("#endif")
-    }
-
     private fun includeFiles(out: PrintWriter) {
         out.println("#include \"${getName()}" + "Enum.hpp\"")
+        out.println("#include \"${getName()}" + "Config.hpp\"")
     }
 
     private fun publicMethods(out: PrintWriter) {
