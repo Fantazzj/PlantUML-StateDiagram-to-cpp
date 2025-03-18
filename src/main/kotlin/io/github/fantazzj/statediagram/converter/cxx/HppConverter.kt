@@ -64,10 +64,9 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
         val re = Regex("[A-Za-z]\\w*")
         val variables = HashSet<String>()
         val parseAndAdd = { text: String ->
-            re.findAll(text).forEach { m ->
-                if (m.value !in setOf("true", "false"))
             re.findAll(text)
                 .filter { m -> m.value !in setOf("true", "false") }
+                .filter { m -> !m.value.first().isUpperCase() }
                 .forEach { m ->
                     variables.add(m.value)
                 }
