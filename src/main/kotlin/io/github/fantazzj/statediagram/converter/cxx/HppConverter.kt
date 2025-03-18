@@ -75,8 +75,9 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
             s.getActions().forEach { a -> parseAndAdd(a.getAction()) }
         }
 
-        for (v in variables)
+        variables.forEach { v ->
             out.println("\tint $v;")
+        }
     }
 
     private fun privateMethods(out: PrintWriter) {
