@@ -22,4 +22,26 @@ class CxxConverter(name: String, states: Collection<State>) : Converter(name, st
         configConverter.saveToDir(outDir)
     }
 
+    companion object {
+        fun getVariables(states: List<State>): HashSet<String> {
+            val re = Regex("[A-Za-z]\\w*")
+            val variables = HashSet<String>()
+            val parseAndAdd = { text: String ->
+                re.findAll(text)
+                    .filter { m -> m.value !in setOf("true", "false") }
+                    .filter { m -> !m.value.first().isUpperCase() }
+                    .forEach { m ->
+                        variables.add(m.value)
+                    }
+            }
+
+            states.forEach { s ->
+                s.getTransitions().forEach { t -> parseAndAdd(t.getCondition()) }
+                s.getActions().forEach { a -> parseAndAdd(a.getAction()) }
+            }
+
+            return variables
+        }
+    }
+
 }
