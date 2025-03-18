@@ -66,8 +66,11 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
         val parseAndAdd = { text: String ->
             re.findAll(text).forEach { m ->
                 if (m.value !in setOf("true", "false"))
+            re.findAll(text)
+                .filter { m -> m.value !in setOf("true", "false") }
+                .forEach { m ->
                     variables.add(m.value)
-            }
+                }
         }
 
         getStates().forEach { s ->
