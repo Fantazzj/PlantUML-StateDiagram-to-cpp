@@ -65,10 +65,20 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
     private fun writeAutoCycle(out: PrintWriter) {
         out.println("void ${getName()}::autoCycle() {")
         out.println("\telapsedMillis = MILLISECONDS - previousMillis;")
-        out.println("\tif( false ) ;")
-        for (state in getStates())
-            for (transition in state.getTransitions())
-                out.println("\telse if( (newState == ${state.getName()}) && (${transition.getCondition()}) ) changeState(${transition.getTo()});")
+        out.println("\tswitch(newState) {")
+        for (state in getStates()) {
+            out.println("\t\tcase ${state.getName()}:")
+            for (transition in state.getTransitions()) {
+                if (transition == state.getTransitions().first())
+                    out.println("\t\t\tif(${transition.getCondition()}) {")
+                    out.println("\t\t\t\tchangeState(${transition.getTo()});")
+                    out.println("\t\t\t\tbreak;")
+                    out.println("\t\t\t}")
+            }
+            out.println("\t\t\tbreak;")
+
+        }
+        out.println("\t}")
         out.println("}")
     }
 
