@@ -8,6 +8,7 @@ state Closing : handState = Grab
 [*] -down-> Opening
 
 Opening -down-> Closing : azzardo==vero
+Opening -down-> Fake : azzardo==false
 
 BlockOpen -up-> Opening : hazard==false
 
