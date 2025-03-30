@@ -10,12 +10,14 @@ import io.github.fantazzj.statediagram.converter.Converter
 import io.github.fantazzj.statediagram.converter.cxx.CxxConverter
 import io.github.fantazzj.statediagram.structure.State
 import net.sourceforge.plantuml.Run
+import net.sourceforge.plantuml.UmlDiagram
 import net.sourceforge.plantuml.abel.Entity
 import net.sourceforge.plantuml.abel.Link
 import net.sourceforge.plantuml.core.UmlSource
 import net.sourceforge.plantuml.statediagram.StateDiagram
 import net.sourceforge.plantuml.statediagram.StateDiagramFactory
 import net.sourceforge.plantuml.text.StringLocated
+import net.sourceforge.plantuml.text.TLineType
 import java.io.File
 import java.nio.file.Paths
 
@@ -23,6 +25,9 @@ fun readFile(inputFile: File): ArrayList<StringLocated> {
     val source = ArrayList<StringLocated>()
     inputFile.forEachLine { l ->
         source.add(StringLocated(l, null))
+    }
+    source.removeIf { l ->
+        l.type == TLineType.COMMENT_SIMPLE || l.string.isBlank()
     }
     return source
 }

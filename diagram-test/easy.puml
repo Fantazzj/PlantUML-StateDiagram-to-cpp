@@ -1,6 +1,8 @@
 @startuml
 hide empty description
 
+'Simple comment
+
 state Opening : handState = Open
 state Opening : statoMano = Aperto
 state Closing : handState = Grab
