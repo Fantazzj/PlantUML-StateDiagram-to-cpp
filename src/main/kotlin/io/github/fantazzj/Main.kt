@@ -96,7 +96,9 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
             }
         }
 
+        val diagramName = inputFile.name.replace(Regex("(\\.puml|\\.plantuml|\\.uml)"), "")
         if (verbose) {
+            println("Converting $diagramName")
             println("States in converter's view:")
             states.forEach(::println)
         }
@@ -105,7 +107,7 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
             nullableOutputDir ?: Paths.get(inputFile.absolutePath.replace(Regex("(\\.puml|\\.plantuml|\\.uml)"), ""))
 
         if (verbose) println("Converted files will be saved in: \"$outputDir\"")
-        val converter: Converter = CxxConverter("easy", states)
+        val converter: Converter = CxxConverter(diagramName, states)
         converter.saveToDir(outputDir)
 
         if (outputImage)

@@ -2,7 +2,7 @@
   <configuration default="false" name="MainKt" type="JetRunConfigurationType">
     <option name="MAIN_CLASS_NAME" value="io.github.fantazzj.MainKt" />
     <module name="plantuml-statediagram-to-cpp.main" />
-    <option name="PROGRAM_PARAMETERS" value="--image .\diagram-test\easy.puml" />
+    <option name="PROGRAM_PARAMETERS" value="-v --image .\diagram-test\easy.puml" />
     <target name="@@@LOCAL@@@" />
     <shortenClasspath name="NONE" />
     <option name="WORKING_DIRECTORY" value="." />
