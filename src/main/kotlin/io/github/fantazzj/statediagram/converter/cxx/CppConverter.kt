@@ -50,6 +50,7 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
     private fun writeConstructor(out: PrintWriter) {
         out.println("${getName()}::${getName()}() {")
         out.println("\tthis->newState = ${getFirstState().getName()};")
+        out.println("\tthis->oldState = ${getFirstState().getName()};")
         out.println("\tthis->elapsedMillis = 0;")
         out.println("}")
     }
@@ -68,15 +69,19 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
         out.println("\tswitch(newState) {")
         for (state in getStates()) {
             out.println("\t\tcase ${state.getName()}:")
-            for (transition in state.getTransitions()) {
-                if (transition == state.getTransitions().first())
+            if (state.getTransitions().isEmpty())
+                out.println("\t\t\tbreak;")
+            else for (transition in state.getTransitions()) {
+                if (transition.getCondition() == "true") {
+                    out.println("\t\t\tchangeState(${transition.getTo()});")
+                    out.println("\t\t\tbreak;")
+                } else {
                     out.println("\t\t\tif(${transition.getCondition()}) {")
                     out.println("\t\t\t\tchangeState(${transition.getTo()});")
                     out.println("\t\t\t\tbreak;")
                     out.println("\t\t\t}")
+                }
             }
-            out.println("\t\t\tbreak;")
-
         }
         out.println("\t}")
         out.println("}")
