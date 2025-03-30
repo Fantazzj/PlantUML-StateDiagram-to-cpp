@@ -10,7 +10,6 @@ import io.github.fantazzj.statediagram.converter.Converter
 import io.github.fantazzj.statediagram.converter.cxx.CxxConverter
 import io.github.fantazzj.statediagram.structure.State
 import net.sourceforge.plantuml.Run
-import net.sourceforge.plantuml.UmlDiagram
 import net.sourceforge.plantuml.abel.Entity
 import net.sourceforge.plantuml.abel.Link
 import net.sourceforge.plantuml.core.UmlSource
