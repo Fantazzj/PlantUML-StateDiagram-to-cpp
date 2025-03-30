@@ -21,6 +21,8 @@ class ConfigConverter(name: String, states: Collection<State>) : Converter(name,
             out.println()
             defineHardwareSpecific(out)
             out.println()
+            defineVariablesTypes(out)
+            out.println()
             defineVariablesInitialValue(out)
             out.println()
             out.println("#endif //${getName().uppercase()}_CONFIG_HPP")
@@ -34,11 +36,19 @@ class ConfigConverter(name: String, states: Collection<State>) : Converter(name,
         out.println("#endif")
     }
 
+    private fun defineVariablesTypes(out: PrintWriter) {
+        val variables = CxxConverter.getVariables(getStates())
+
+        variables.forEach { v ->
+            out.println("typedef int ${v + "_t"};")
+        }
+    }
+
     private fun defineVariablesInitialValue(out: PrintWriter) {
         val variables = CxxConverter.getVariables(getStates())
 
         variables.forEach { v ->
-            out.println("#define ${v.uppercase()}")
+            out.println("constexpr ${v + "_t"} ${v.uppercase()} = 0;")
         }
     }
 

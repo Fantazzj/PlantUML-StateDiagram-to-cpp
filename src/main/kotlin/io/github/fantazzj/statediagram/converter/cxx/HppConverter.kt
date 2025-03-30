@@ -55,7 +55,7 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
         val variables = CxxConverter.getVariables(getStates())
 
         variables.forEach { v ->
-            out.println("\tauto $v = ${v.uppercase()};")
+            out.println("\t${v + "_t"} $v = ${v.uppercase()};")
         }
     }
 
