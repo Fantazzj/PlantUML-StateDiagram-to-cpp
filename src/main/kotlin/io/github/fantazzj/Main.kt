@@ -20,59 +20,6 @@ import net.sourceforge.plantuml.text.TLineType
 import java.io.File
 import java.nio.file.Paths
 
-fun readFile(inputFile: File): ArrayList<StringLocated> {
-    val source = ArrayList<StringLocated>()
-    inputFile.forEachLine { l ->
-        source.add(StringLocated(l, null))
-    }
-    source.removeIf { l ->
-        l.type == TLineType.COMMENT_SIMPLE || l.string.isBlank()
-    }
-    return source
-}
-
-fun plantUmlParse(source: ArrayList<StringLocated>): StateDiagram {
-    val umlSource = UmlSource.create(source, false)
-    val diagram = StateDiagramFactory().createSystem(umlSource, HashMap<String, String>())
-    if (diagram !is StateDiagram)
-        throw Exception("Given PlantUML is not a StateDiagram")
-    return diagram
-}
-
-fun plantUmlLog(links: List<Link>, leafs: Collection<Entity>) {
-    println("Parsed states by PlantUML:")
-    leafs.forEach { l ->
-        println(" - ${l.name}")
-        println(" - \t${l.bodier.rawBody}")
-    }
-    println("Parsed transitions by PlantUML:")
-    links.forEach { l ->
-        println(" - ${l.entity1.name} --${l.label}-> ${l.entity2.name}")
-    }
-}
-
-fun plantUmlToMine(links: List<Link>, leafs: Collection<Entity>): Collection<State> {
-    val states = ArrayList<State>()
-    leafs.forEach { l ->
-        val state = State(l.name)
-        l.bodier.rawBody.forEach { b ->
-            state.addAction(b.toString())
-        }
-        states.add(state)
-    }
-    links.forEach { l ->
-        states.forEach { s ->
-            if (l.entity1.name == s.getName())
-                s.addTransition(
-                    l.entity2.name,
-                    if (l.label.size() > 0) l.label.get(0).toString()
-                    else "true"
-                )
-        }
-    }
-    return states
-}
-
 class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
     private val inputFile by argument(help = "input PlantUML file (needs correct extension)").file(
         mustExist = true,
@@ -84,21 +31,77 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
     private val outputImage by option("--image", help = "create also a png image of the diagram").flag()
     private val nullableOutputDir by option("-o", "--output", help = "path to output folder").path()
 
-    override fun run() {
-        if (verbose) println("Input file is \"$inputFile\"")
+    private fun readFile(inputFile: File): ArrayList<StringLocated> {
+        if (verbose)
+            println("Input file is \"$inputFile\"")
 
-        val source = readFile(inputFile)
-        val diagram = plantUmlParse(source)
+        val source = ArrayList<StringLocated>()
+        inputFile.forEachLine { l ->
+            source.add(StringLocated(l, null))
+        }
+        source.removeIf { l ->
+            l.type == TLineType.COMMENT_SIMPLE || l.string.isBlank()
+        }
+        return source
+    }
 
+    private fun plantUmlParse(source: ArrayList<StringLocated>): StateDiagram {
+        val umlSource = UmlSource.create(source, false)
+        val diagram = StateDiagramFactory().createSystem(umlSource, HashMap<String, String>())
+        if (diagram !is StateDiagram)
+            throw Exception("Given PlantUML is not a StateDiagram")
+        return diagram
+    }
+
+    private fun plantUmlLog(links: List<Link>, leafs: Collection<Entity>) {
+        println("Parsed states by PlantUML:")
+        leafs.forEach { l ->
+            println(" - ${l.name}")
+            println(" - \t${l.bodier.rawBody}")
+        }
+        println("Parsed transitions by PlantUML:")
+        links.forEach { l ->
+            println(" - ${l.entity1.name} --${l.label}-> ${l.entity2.name}")
+        }
+    }
+
+    private fun plantUmlToMine(diagram: StateDiagram): Collection<State> {
         val leafs = diagram.currentGroup.leafs()
         val links = diagram.links.map { l ->
             if (l.isInverted) l.inv
             else l
         }
 
-        if (verbose) plantUmlLog(links, leafs)
+        if (verbose)
+            plantUmlLog(links, leafs)
 
-        val states = plantUmlToMine(links, leafs)
+        val states = ArrayList<State>()
+        leafs.forEach { l ->
+            val state = State(l.name)
+            l.bodier.rawBody.forEach { b ->
+                state.addAction(b.toString())
+            }
+            states.add(state)
+        }
+        links.forEach { l ->
+            states.forEach { s ->
+                if (l.entity1.name == s.getName())
+                    s.addTransition(
+                        l.entity2.name,
+                        if (l.label.size() > 0) l.label.get(0).toString()
+                        else "true"
+                    )
+            }
+        }
+        return states
+    }
+
+    override fun run() {
+        val source = readFile(inputFile)
+
+        val diagram = plantUmlParse(source)
+
+        val states = plantUmlToMine(diagram)
 
         val diagramName = inputFile.name.replace(Regex("(\\.puml|\\.plantuml|\\.uml)"), "")
         if (verbose) {
