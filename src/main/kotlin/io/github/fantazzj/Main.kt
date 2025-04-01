@@ -21,11 +21,14 @@ import java.io.File
 import java.nio.file.Paths
 
 class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
+
+    private val extensionRegex = Regex("(\\.puml|\\.plantuml|\\.uml)")
+
     private val inputFile by argument(help = "input PlantUML file (needs correct extension)").file(
         mustExist = true,
         canBeDir = false
     ).check { f ->
-        f.name.contains(Regex("(\\.puml|\\.plantuml|\\.uml)"))
+        f.name.contains(extensionRegex)
     }
     private val verbose by option("-v", "--verbose", help = "print all information").flag()
     private val outputImage by option("--image", help = "create also a png image of the diagram").flag()
@@ -53,7 +56,7 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
         return diagram
     }
 
-    private fun plantUmlLog(links: List<Link>, leafs: Collection<Entity>) {
+    private fun plantUmlLog(links: Collection<Link>, leafs: Collection<Entity>) {
         println("Parsed states by PlantUML:")
         leafs.forEach { l ->
             println(" - ${l.name}")
@@ -103,7 +106,7 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
 
         val states = plantUmlToMine(diagram)
 
-        val diagramName = inputFile.name.replace(Regex("(\\.puml|\\.plantuml|\\.uml)"), "")
+        val diagramName = inputFile.name.replace(extensionRegex, "")
         if (verbose) {
             println("Converting $diagramName")
             println("States in converter's view:")
@@ -111,9 +114,11 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
         }
 
         val outputDir =
-            nullableOutputDir ?: Paths.get(inputFile.absolutePath.replace(Regex("(\\.puml|\\.plantuml|\\.uml)"), ""))
+            nullableOutputDir ?: Paths.get(inputFile.absolutePath.replace(extensionRegex, ""))
 
-        if (verbose) println("Converted files will be saved in: \"$outputDir\"")
+        if (verbose)
+            println("Converted files will be saved in: \"$outputDir\"")
+
         val converter: Converter = CxxConverter(diagramName, states)
         converter.saveToDir(outputDir)
 
