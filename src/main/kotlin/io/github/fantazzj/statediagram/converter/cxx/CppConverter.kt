@@ -77,7 +77,6 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
             else for (transition in state.getTransitions()) {
                 if (transition.getCondition() == "true") {
                     out.println("\t\t\tchangeState(${transition.getTo()});")
-                    out.println("\t\t\tbreak;")
                 } else {
                     out.println("\t\t\tif(${transition.getCondition()}) {")
                     out.println("\t\t\t\tchangeState(${transition.getTo()});")
@@ -85,6 +84,7 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
                     out.println("\t\t\t}")
                 }
             }
+            out.println("\t\t\tbreak;")
         }
         out.println("\t}")
         out.println("}")
