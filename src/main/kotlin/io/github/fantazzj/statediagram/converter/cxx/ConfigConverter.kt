@@ -55,7 +55,7 @@ class ConfigConverter(name: String, states: Collection<State>) : Converter(name,
         val variables = CxxConverter.getVariables(getStates())
 
         variables.forEach { v ->
-            out.println("\t#define ${v.uppercase()} 0")
+            out.println("#define ${v.uppercase()} 0")
         }
     }
 
