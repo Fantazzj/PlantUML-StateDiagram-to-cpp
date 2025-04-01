@@ -8,6 +8,10 @@ import java.nio.file.Path
 
 class ConfigConverter(name: String, states: Collection<State>) : Converter(name, states) {
 
+    private val variables = CxxConverter.getVariables(states)
+
+    private val objects = CxxConverter.getObjects(states)
+
     override fun saveToDir(outDir: Path) {
         val configFile = File("$outDir/${getName()}" + "Config.hpp")
         configFile.createNewFile()
@@ -39,9 +43,6 @@ class ConfigConverter(name: String, states: Collection<State>) : Converter(name,
     }
 
     private fun defineVariablesTypes(out: PrintWriter) {
-        val variables = CxxConverter.getVariables(getStates())
-        val objects = CxxConverter.getObjects(getStates())
-
         variables.forEach { v ->
             out.println("typedef int ${v + "_t"};")
         }
@@ -52,8 +53,6 @@ class ConfigConverter(name: String, states: Collection<State>) : Converter(name,
     }
 
     private fun defineVariablesInitialValue(out: PrintWriter) {
-        val variables = CxxConverter.getVariables(getStates())
-
         variables.forEach { v ->
             out.println("#define ${v.uppercase()} 0")
         }

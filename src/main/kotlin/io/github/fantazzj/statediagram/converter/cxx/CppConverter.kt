@@ -8,6 +8,10 @@ import java.nio.file.Path
 
 class CppConverter(name: String, states: Collection<State>) : Converter(name, states) {
 
+    private val variables = CxxConverter.getVariables(states)
+
+    private val objects = CxxConverter.getObjects(states)
+
     override fun saveToDir(outDir: Path) {
         val cppFile = File("$outDir/${getName()}.cpp")
         cppFile.createNewFile()
@@ -48,7 +52,6 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
     }
 
     private fun writeConstructor(out: PrintWriter) {
-        val objects = CxxConverter.getObjects(getStates())
         out.print("${getName()}::${getName()}(")
         objects.forEach { o ->
             out.print("${o + "_t"} $o")
@@ -68,7 +71,7 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
         out.println("\tthis->oldState = ${getFirstState().getName()};")
         out.println("\tthis->elapsedMillis = 0;")
         out.println("\tthis->previousMillis = 0;")
-        CxxConverter.getVariables(getStates()).forEach { v ->
+        variables.forEach { v ->
             out.println("\tthis->$v = ${v.uppercase()};")
         }
         out.println("}")

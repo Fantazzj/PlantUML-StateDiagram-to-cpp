@@ -8,6 +8,10 @@ import java.io.PrintWriter
 
 class HppConverter(name: String, states: Collection<State>) : Converter(name, states) {
 
+    private val variables = CxxConverter.getVariables(states)
+
+    private val objects = CxxConverter.getObjects(states)
+
     override fun saveToDir(outDir: Path) {
         val hppFile = File("$outDir/${getName()}.hpp")
         hppFile.createNewFile()
@@ -45,7 +49,6 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
     }
 
     private fun publicMethods(out: PrintWriter) {
-        val objects = CxxConverter.getObjects(getStates())
         out.print("\t${getName()}(")
         objects.forEach { o ->
             out.print("${o + "_t"} $o")
@@ -59,9 +62,6 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
     }
 
     private fun publicAttributes(out: PrintWriter) {
-        val variables = CxxConverter.getVariables(getStates())
-        val objects = CxxConverter.getObjects(getStates())
-
         variables.forEach { v ->
             out.println("\t${v + "_t"} $v;")
         }
