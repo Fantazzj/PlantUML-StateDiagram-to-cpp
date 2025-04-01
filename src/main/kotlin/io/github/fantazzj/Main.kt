@@ -51,6 +51,28 @@ fun plantUmlLog(links: List<Link>, leafs: Collection<Entity>) {
     }
 }
 
+fun plantUmlToMine(links: List<Link>, leafs: Collection<Entity>): Collection<State> {
+    val states = ArrayList<State>()
+    leafs.forEach { l ->
+        val state = State(l.name)
+        l.bodier.rawBody.forEach { b ->
+            state.addAction(b.toString())
+        }
+        states.add(state)
+    }
+    links.forEach { l ->
+        states.forEach { s ->
+            if (l.entity1.name == s.getName())
+                s.addTransition(
+                    l.entity2.name,
+                    if (l.label.size() > 0) l.label.get(0).toString()
+                    else "true"
+                )
+        }
+    }
+    return states
+}
+
 class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
     private val inputFile by argument(help = "input PlantUML file (needs correct extension)").file(
         mustExist = true,
@@ -68,7 +90,6 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
         val source = readFile(inputFile)
         val diagram = plantUmlParse(source)
 
-        //val leafs = diagram.leafs()
         val leafs = diagram.currentGroup.leafs()
         val links = diagram.links.map { l ->
             if (l.isInverted) l.inv
@@ -77,24 +98,7 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
 
         if (verbose) plantUmlLog(links, leafs)
 
-        val states = ArrayList<State>()
-        leafs.forEach { l ->
-            val state = State(l.name)
-            l.bodier.rawBody.forEach { b ->
-                state.addAction(b.toString())
-            }
-            states.add(state)
-        }
-        links.forEach { l ->
-            states.forEach { s ->
-                if (l.entity1.name == s.getName())
-                    s.addTransition(
-                        l.entity2.name,
-                        if (l.label.size() > 0) l.label.get(0).toString()
-                        else "true"
-                    )
-            }
-        }
+        val states = plantUmlToMine(links, leafs)
 
         val diagramName = inputFile.name.replace(Regex("(\\.puml|\\.plantuml|\\.uml)"), "")
         if (verbose) {
