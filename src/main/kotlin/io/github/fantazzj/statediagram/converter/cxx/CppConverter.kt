@@ -73,6 +73,7 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
         out.println("\tthis->newState = ${getFirstState().getName()};")
         out.println("\tthis->oldState = ${getFirstState().getName()};")
         out.println("\tthis->elapsedMillis = 0;")
+        out.println("\tthis->previousMillis = 0;")
         CxxConverter.getVariables(getStates()).forEach { v ->
             out.println("\tthis->$v = CFG::${v.uppercase()};")
         }
