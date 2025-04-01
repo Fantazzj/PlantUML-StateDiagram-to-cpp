@@ -45,7 +45,14 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
     }
 
     private fun publicMethods(out: PrintWriter) {
-        out.println("\t${getName()}();")
+        val objects = CxxConverter.getObjects(getStates())
+        out.print("\t${getName()}(")
+        objects.forEach { o ->
+            out.print("${o + "_t"} $o")
+            if (o != objects.last())
+                out.print(", ")
+        }
+        out.println(");")
         out.println("\tvoid autoCycle();")
         out.println("\tvoid outputAnalysis();")
         out.println("\tState newState;")

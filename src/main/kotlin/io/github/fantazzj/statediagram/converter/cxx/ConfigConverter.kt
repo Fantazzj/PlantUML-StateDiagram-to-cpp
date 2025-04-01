@@ -38,8 +38,13 @@ class ConfigConverter(name: String, states: Collection<State>) : Converter(name,
 
     private fun defineVariablesTypes(out: PrintWriter) {
         val variables = CxxConverter.getVariables(getStates())
+        val objects = CxxConverter.getObjects(getStates())
 
         variables.forEach { v ->
+            out.println("typedef int ${v + "_t"};")
+        }
+
+        objects.forEach { v ->
             out.println("typedef int ${v + "_t"};")
         }
     }
@@ -47,9 +52,11 @@ class ConfigConverter(name: String, states: Collection<State>) : Converter(name,
     private fun defineVariablesInitialValue(out: PrintWriter) {
         val variables = CxxConverter.getVariables(getStates())
 
+        out.println("struct ${getName()}Config {")
         variables.forEach { v ->
-            out.println("constexpr ${v + "_t"} ${v.uppercase()} = 0;")
+            out.println("\tstatic constexpr ${v + "_t"} ${v.uppercase()} = 0;")
         }
+        out.println("};")
     }
 
 }

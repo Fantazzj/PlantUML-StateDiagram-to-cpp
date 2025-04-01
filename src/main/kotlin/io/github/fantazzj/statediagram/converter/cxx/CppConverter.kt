@@ -48,12 +48,27 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
     }
 
     private fun writeConstructor(out: PrintWriter) {
-        out.println("${getName()}::${getName()}() {")
+        val objects = CxxConverter.getObjects(getStates())
+        out.print("${getName()}::${getName()}(")
+        objects.forEach { o ->
+            out.print("${o + "_t"} $o")
+            if (o != objects.last())
+                out.print(", ")
+        }
+        out.print(")")
+        objects.forEach { o ->
+            if (o == objects.first())
+                out.print(" : ")
+            out.print("$o($o)")
+            if (o != objects.last())
+                out.print(", ")
+        }
+        out.println("{")
         out.println("\tthis->newState = ${getFirstState().getName()};")
         out.println("\tthis->oldState = ${getFirstState().getName()};")
         out.println("\tthis->elapsedMillis = 0;")
         CxxConverter.getVariables(getStates()).forEach { v ->
-            out.println("\tthis->$v = ${v.uppercase()};")
+            out.println("\tthis->$v = ${getName()+"Config"}::${v.uppercase()};")
         }
         out.println("}")
     }
