@@ -23,13 +23,14 @@ class CxxConverter(name: String, states: Collection<State>) : Converter(name, st
     }
 
     companion object {
-        fun getVariables(states: List<State>): HashSet<String> {
-            val re = Regex("[A-Za-z]\\w*")
+        private val parserRegex = Regex("\\b[a-z][\\w.]*")
+
+        fun getVariables(states: Collection<State>): Collection<String> {
             val variables = HashSet<String>()
             val parseAndAdd = { text: String ->
-                re.findAll(text)
+                parserRegex.findAll(text)
                     .filter { m -> m.value !in setOf("true", "false") }
-                    .filter { m -> !m.value.first().isUpperCase() }
+                    .filter { m -> !m.value.contains('.') }
                     .forEach { m ->
                         variables.add(m.value)
                     }
@@ -41,6 +42,24 @@ class CxxConverter(name: String, states: Collection<State>) : Converter(name, st
             }
 
             return variables
+        }
+
+        fun getObjects(states: Collection<State>): Collection<String> {
+            val objects = HashSet<String>()
+            val parseAndAdd = { text: String ->
+                parserRegex.findAll(text)
+                    .forEach { m ->
+                        if (m.value.contains('.'))
+                            objects.add(m.value.split('.').first())
+                    }
+            }
+
+            states.forEach { s ->
+                s.getTransitions().forEach { t -> parseAndAdd(t.getCondition()) }
+                s.getActions().forEach { a -> parseAndAdd(a.getAction()) }
+            }
+
+            return objects
         }
     }
 

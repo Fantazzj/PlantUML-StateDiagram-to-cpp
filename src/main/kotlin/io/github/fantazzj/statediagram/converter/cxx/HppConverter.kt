@@ -53,9 +53,14 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
 
     private fun publicAttributes(out: PrintWriter) {
         val variables = CxxConverter.getVariables(getStates())
+        val objects = CxxConverter.getObjects(getStates())
 
         variables.forEach { v ->
-            out.println("\t${v + "_t"} $v = ${v.uppercase()};")
+            out.println("\t${v + "_t"} $v;")
+        }
+
+        objects.forEach { v ->
+            out.println("\t${v + "_t"} $v;")
         }
     }
 
