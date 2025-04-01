@@ -18,6 +18,8 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
         cppFile.printWriter().use { out ->
             writeInclude(out)
             out.println()
+            writeUsingDirectives(out)
+            out.println()
             writeConstructor(out)
             out.println()
             writeAutoCycle(out)
@@ -30,6 +32,10 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
 
     private fun writeInclude(out: PrintWriter) {
         out.println("#include \"${getName()}.hpp\"")
+    }
+
+    private fun writeUsingDirectives(out: PrintWriter) {
+        out.println("using CFG = ${getName()+"Config"};")
     }
 
     private fun writeOutputAnalysis(out: PrintWriter) {
@@ -68,7 +74,7 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
         out.println("\tthis->oldState = ${getFirstState().getName()};")
         out.println("\tthis->elapsedMillis = 0;")
         CxxConverter.getVariables(getStates()).forEach { v ->
-            out.println("\tthis->$v = ${getName()+"Config"}::${v.uppercase()};")
+            out.println("\tthis->$v = CFG::${v.uppercase()};")
         }
         out.println("}")
     }
