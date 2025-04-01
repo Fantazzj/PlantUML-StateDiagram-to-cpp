@@ -69,6 +69,8 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
         objects.forEach { v ->
             out.println("\t${v + "_t"} $v;")
         }
+
+        out.println("\tADDITIONAL_PUBLIC_ATT;")
     }
 
     private fun privateMethods(out: PrintWriter) {
@@ -79,6 +81,7 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
         out.println("\tState oldState;")
         out.println("\tunsigned long previousMillis;")
         out.println("\tunsigned long elapsedMillis;")
+        out.println("\tADDITIONAL_PRIVATE_ATT;")
     }
 
     private fun includeGuardsBottom(out: PrintWriter) {

@@ -25,6 +25,8 @@ class ConfigConverter(name: String, states: Collection<State>) : Converter(name,
             out.println()
             defineVariablesInitialValue(out)
             out.println()
+            defineAdditionalAttributes(out)
+            out.println()
             out.println("#endif //${getName().uppercase()}_CONFIG_HPP")
         }
 
@@ -52,11 +54,14 @@ class ConfigConverter(name: String, states: Collection<State>) : Converter(name,
     private fun defineVariablesInitialValue(out: PrintWriter) {
         val variables = CxxConverter.getVariables(getStates())
 
-        out.println("struct ${getName()}Config {")
         variables.forEach { v ->
-            out.println("\tstatic constexpr ${v + "_t"} ${v.uppercase()} = 0;")
+            out.println("\t#define ${v.uppercase()} 0")
         }
-        out.println("};")
+    }
+
+    private fun defineAdditionalAttributes(out: PrintWriter) {
+        out.println("#define ADDITIONAL_PRIVATE_ATT void foo_priv")
+        out.println("#define ADDITIONAL_PUBLIC_ATT void foo_public")
     }
 
 }
