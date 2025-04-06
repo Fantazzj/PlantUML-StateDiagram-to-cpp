@@ -78,7 +78,7 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
     }
 
     private fun writeChangeState(out: PrintWriter) {
-        out.println("void ${getName()}::changeState(State newState) {")
+        out.println("void ${getName()}::changeState(${getName() + "State"} newState) {")
         out.println("\tthis->newState = newState;")
         out.println("\telapsedMillis = 0;")
         out.println("\tpreviousMillis = MILLISECONDS;")
