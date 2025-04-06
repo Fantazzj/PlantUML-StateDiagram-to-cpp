@@ -22,8 +22,6 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
         cppFile.printWriter().use { out ->
             writeInclude(out)
             out.println()
-            //writeUsing(out)
-            //out.println()
             writeConstructor(out)
             out.println()
             writeAutoCycle(out)
@@ -36,10 +34,6 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
 
     private fun writeInclude(out: PrintWriter) {
         out.println("#include \"${getName()}.hpp\"")
-    }
-
-    private fun writeUsing(out: PrintWriter) {
-        out.println("using enum ${getName() + "State"};")
     }
 
     private fun writeOutputAnalysis(out: PrintWriter) {
