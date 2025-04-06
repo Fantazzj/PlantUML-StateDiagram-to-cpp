@@ -13,7 +13,7 @@ class ConfigConverter(name: String, states: Collection<State>) : Converter(name,
     private val objects = CxxConverter.getObjects(states)
 
     override fun saveToDir(outDir: Path) {
-        val configFile = File("$outDir/${getName()}" + "Config.hpp")
+        val configFile = File("$outDir/${getName()}Config.hpp")
         configFile.createNewFile()
         addConfigContent(configFile)
     }
@@ -44,11 +44,11 @@ class ConfigConverter(name: String, states: Collection<State>) : Converter(name,
 
     private fun defineVariablesTypes(out: PrintWriter) {
         variables.forEach { v ->
-            out.println("typedef int ${getName() + "_" + v + "_t"};")
+            out.println("typedef int ${getName()}_${v}_t};")
         }
 
         objects.forEach { o ->
-            out.println("typedef int ${getName() + "_" + o + "_t"};")
+            out.println("typedef int ${getName()}_${o}_t};")
         }
     }
 

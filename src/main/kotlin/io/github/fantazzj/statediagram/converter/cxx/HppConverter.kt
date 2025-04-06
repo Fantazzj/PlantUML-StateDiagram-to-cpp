@@ -44,30 +44,30 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
     }
 
     private fun includeFiles(out: PrintWriter) {
-        out.println("#include \"${getName() + "State"}.hpp\"")
-        out.println("#include \"${getName() + "Config"}.hpp\"")
+        out.println("#include \"${getName()}State.hpp\"")
+        out.println("#include \"${getName()}Config.hpp\"")
     }
 
     private fun publicMethods(out: PrintWriter) {
         out.print("\texplicit ${getName()}(")
         objects.forEach { o ->
-            out.print("${getName() + "_" + o + "_t"} $o")
+            out.print("${getName()}_${o}_t $o")
             if (o != objects.last())
                 out.print(", ")
         }
         out.println(");")
         out.println("\tvoid autoCycle();")
         out.println("\tvoid outputAnalysis();")
-        out.println("\t${getName()+"State"} newState;")
+        out.println("\t${getName()}State newState;")
     }
 
     private fun publicAttributes(out: PrintWriter) {
         variables.forEach { v ->
-            out.println("\t${getName() + "_" + v + "_t"} $v;")
+            out.println("\t${getName()}_${v}_t $v;")
         }
 
-        objects.forEach { v ->
-            out.println("\t${getName() + "_" + v + "_t"} $v;")
+        objects.forEach { o ->
+            out.println("\t${getName()}_${o}_t $o;")
         }
 
         out.println("\t#ifdef ADDITIONAL_PUBLIC_ATT")
@@ -76,11 +76,11 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
     }
 
     private fun privateMethods(out: PrintWriter) {
-        out.println("\tvoid changeState(${getName() + "State"} step);")
+        out.println("\tvoid changeState(${getName()}State step);")
     }
 
     private fun privateAttributes(out: PrintWriter) {
-        out.println("\t${getName() + "State"} oldState;")
+        out.println("\t${getName()}State oldState;")
         out.println("\tunsigned long previousMillis;")
         out.println("\tunsigned long elapsedMillis;")
         out.println("\t#ifdef ADDITIONAL_PRIVATE_ATT")
