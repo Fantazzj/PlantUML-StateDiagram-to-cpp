@@ -59,8 +59,9 @@ class ConfigConverter(name: String, states: Collection<State>) : Converter(name,
     }
 
     private fun defineAdditionalAttributes(out: PrintWriter) {
-        out.println("#define ADDITIONAL_PRIVATE_ATT void foo_priv")
-        out.println("#define ADDITIONAL_PUBLIC_ATT void foo_public")
+        out.println("//if are unused can be safely deleted these two lines")
+        out.println("#define ADDITIONAL_PRIVATE_ATT void* foo_priv")
+        out.println("#define ADDITIONAL_PUBLIC_ATT void* foo_public")
     }
 
 }
