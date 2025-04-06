@@ -44,8 +44,8 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
     }
 
     private fun includeFiles(out: PrintWriter) {
-        out.println("#include \"${getName()}" + "Enum.hpp\"")
-        out.println("#include \"${getName()}" + "Config.hpp\"")
+        out.println("#include \"${getName() + "State"}.hpp\"")
+        out.println("#include \"${getName() + "Config"}.hpp\"")
     }
 
     private fun publicMethods(out: PrintWriter) {
@@ -58,7 +58,7 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
         out.println(");")
         out.println("\tvoid autoCycle();")
         out.println("\tvoid outputAnalysis();")
-        out.println("\tState newState;")
+        out.println("\t${getName()+"State"} newState;")
     }
 
     private fun publicAttributes(out: PrintWriter) {
@@ -76,11 +76,11 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
     }
 
     private fun privateMethods(out: PrintWriter) {
-        out.println("\tvoid changeState(State step);")
+        out.println("\tvoid changeState(${getName() + "State"} step);")
     }
 
     private fun privateAttributes(out: PrintWriter) {
-        out.println("\tState oldState;")
+        out.println("\t${getName() + "State"} oldState;")
         out.println("\tunsigned long previousMillis;")
         out.println("\tunsigned long elapsedMillis;")
         out.println("\t#ifdef ADDITIONAL_PRIVATE_ATT")
