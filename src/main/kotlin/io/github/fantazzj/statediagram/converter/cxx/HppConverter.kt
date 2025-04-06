@@ -49,9 +49,9 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
     }
 
     private fun publicMethods(out: PrintWriter) {
-        out.print("\t${getName()}(")
+        out.print("\texplicit ${getName()}(")
         objects.forEach { o ->
-            out.print("${o + "_t"} $o")
+            out.print("${getName() + "_" + o + "_t"} $o")
             if (o != objects.last())
                 out.print(", ")
         }
@@ -63,11 +63,11 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
 
     private fun publicAttributes(out: PrintWriter) {
         variables.forEach { v ->
-            out.println("\t${v + "_t"} $v;")
+            out.println("\t${getName() + "_" + v + "_t"} $v;")
         }
 
         objects.forEach { v ->
-            out.println("\t${v + "_t"} $v;")
+            out.println("\t${getName() + "_" + v + "_t"} $v;")
         }
 
         out.println("\t#ifdef ADDITIONAL_PUBLIC_ATT")

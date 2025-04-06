@@ -44,11 +44,11 @@ class ConfigConverter(name: String, states: Collection<State>) : Converter(name,
 
     private fun defineVariablesTypes(out: PrintWriter) {
         variables.forEach { v ->
-            out.println("typedef int ${v + "_t"};")
+            out.println("typedef int ${getName() + "_" + v + "_t"};")
         }
 
-        objects.forEach { v ->
-            out.println("typedef int ${v + "_t"};")
+        objects.forEach { o ->
+            out.println("typedef int ${getName() + "_" + o + "_t"};")
         }
     }
 

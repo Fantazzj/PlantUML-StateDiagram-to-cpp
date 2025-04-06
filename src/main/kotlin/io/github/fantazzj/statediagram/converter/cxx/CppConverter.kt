@@ -22,6 +22,8 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
         cppFile.printWriter().use { out ->
             writeInclude(out)
             out.println()
+            //writeUsing(out)
+            //out.println()
             writeConstructor(out)
             out.println()
             writeAutoCycle(out)
@@ -36,12 +38,16 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
         out.println("#include \"${getName()}.hpp\"")
     }
 
+    private fun writeUsing(out: PrintWriter) {
+        out.println("using enum ${getName() + "State"};")
+    }
+
     private fun writeOutputAnalysis(out: PrintWriter) {
         out.println("void ${getName()}::outputAnalysis() {")
         out.println("\toldState = newState;")
         out.println("\tswitch(newState) {")
         for (state in getStates()) {
-            out.println("\t\tcase ${state.getName()}:")
+            out.println("\t\tcase ${getName() + "State::" + state.getName()}:")
             for (action in state.getActions())
                 out.println("\t\t\t${action.getAction()};")
             out.println("\t\t\tbreak;")
@@ -54,7 +60,7 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
     private fun writeConstructor(out: PrintWriter) {
         out.print("${getName()}::${getName()}(")
         objects.forEach { o ->
-            out.print("${o + "_t"} $o")
+            out.print("${getName() + "_" + o + "_t"} $o")
             if (o != objects.last())
                 out.print(", ")
         }
@@ -67,8 +73,8 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
                 out.print(", ")
         }
         out.println("{")
-        out.println("\tthis->newState = ${getFirstState().getName()};")
-        out.println("\tthis->oldState = ${getFirstState().getName()};")
+        out.println("\tthis->newState = ${getName() + "State::" + getFirstState().getName()};")
+        out.println("\tthis->oldState = ${getName() + "State::" + getFirstState().getName()};")
         out.println("\tthis->elapsedMillis = 0;")
         out.println("\tthis->previousMillis = 0;")
         variables.forEach { v ->
@@ -90,15 +96,15 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
         out.println("\telapsedMillis = MILLISECONDS - previousMillis;")
         out.println("\tswitch(newState) {")
         for (state in getStates()) {
-            out.println("\t\tcase ${state.getName()}:")
+            out.println("\t\tcase ${getName() + "State::" + state.getName()}:")
             if (state.getTransitions().isEmpty())
                 out.println("\t\t\tbreak;")
             else for (transition in state.getTransitions()) {
                 if (transition.getCondition() == "true") {
-                    out.println("\t\t\tchangeState(${transition.getTo()});")
+                    out.println("\t\t\tchangeState(${getName() + "State::" + transition.getTo()});")
                 } else {
                     out.println("\t\t\tif(${transition.getCondition()}) {")
-                    out.println("\t\t\t\tchangeState(${transition.getTo()});")
+                    out.println("\t\t\t\tchangeState(${getName() + "State::" + transition.getTo()});")
                     out.println("\t\t\t\tbreak;")
                     out.println("\t\t\t}")
                 }
