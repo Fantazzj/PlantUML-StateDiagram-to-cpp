@@ -72,7 +72,7 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
         out.println("\tthis->elapsedMillis = 0;")
         out.println("\tthis->previousMillis = 0;")
         variables.forEach { v ->
-            out.println("\tthis->$v = ${v.uppercase()};")
+            out.println("\tthis->$v = ${getName().uppercase()}_${v.uppercase()};")
         }
         out.println("}")
     }
@@ -81,13 +81,13 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
         out.println("void ${getName()}::changeState(${getName()}State newState) {")
         out.println("\tthis->newState = newState;")
         out.println("\telapsedMillis = 0;")
-        out.println("\tpreviousMillis = MILLISECONDS;")
+        out.println("\tpreviousMillis = ${getName().uppercase()}_MILLISECONDS;")
         out.println("}")
     }
 
     private fun writeAutoCycle(out: PrintWriter) {
         out.println("void ${getName()}::autoCycle() {")
-        out.println("\telapsedMillis = MILLISECONDS - previousMillis;")
+        out.println("\telapsedMillis = ${getName().uppercase()}_MILLISECONDS - previousMillis;")
         out.println("\tswitch(newState) {")
         for (state in getStates()) {
             out.println("\t\tcase ${getName()}State::${state.getName()}:")

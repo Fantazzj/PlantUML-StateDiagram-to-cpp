@@ -36,9 +36,9 @@ class ConfigConverter(name: String, states: Collection<State>) : Converter(name,
 
     private fun defineHardwareSpecific(out: PrintWriter) {
         out.println("//for arduino:")
-        out.println("//#define MILLISECONDS millis()")
-        out.println("#ifndef MILLISECONDS")
-        out.println("#error \"didn't define the hardware specific MILLISECONDS function\"")
+        out.println("//#define ${getName().uppercase()}_MILLISECONDS millis()")
+        out.println("#ifndef ${getName().uppercase()}_MILLISECONDS")
+        out.println("#error \"didn't define the hardware specific ${getName().uppercase()}_MILLISECONDS function\"")
         out.println("#endif")
     }
 
@@ -54,14 +54,14 @@ class ConfigConverter(name: String, states: Collection<State>) : Converter(name,
 
     private fun defineVariablesInitialValue(out: PrintWriter) {
         variables.forEach { v ->
-            out.println("#define ${v.uppercase()} 0")
+            out.println("#define ${getName().uppercase()}_${v.uppercase()} 0")
         }
     }
 
     private fun defineAdditionalAttributes(out: PrintWriter) {
         out.println("//if are unused can be safely deleted these two lines")
-        out.println("#define ADDITIONAL_PRIVATE_ATT void* foo_priv")
-        out.println("#define ADDITIONAL_PUBLIC_ATT void* foo_public")
+        out.println("#define ${getName().uppercase()}_ADDITIONAL_PRIVATE_ATT void* foo_priv")
+        out.println("#define ${getName().uppercase()}_ADDITIONAL_PUBLIC_ATT void* foo_public")
     }
 
 }
