@@ -31,7 +31,7 @@ class CxxConverter(name: String, states: Collection<State>) : Converter(name, st
             val variables = HashSet<String>()
             val parseAndAdd = { text: String ->
                 parserRegex.findAll(text)
-                    .filter { m -> m.value !in setOf("true", "false") }
+                    .filter { m -> m.value !in setOf("true", "false", "elapsedMillis") }
                     .filter { m -> !m.value.contains('.') }
                     .forEach { m ->
                         variables.add(m.value)
