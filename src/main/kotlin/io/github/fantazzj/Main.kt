@@ -34,7 +34,7 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
     private val outputImage by option("--image", help = "create also a png image of the diagram").flag()
     private val nullableOutputDir by option("-o", "--output", help = "path to output folder").path()
 
-    private fun readFile(inputFile: File): ArrayList<StringLocated> {
+    private fun readFile(inputFile: File): List<StringLocated> {
         if (verbose)
             println("Input file is \"$inputFile\"")
 
@@ -48,7 +48,7 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
         return source
     }
 
-    private fun plantUmlParse(source: ArrayList<StringLocated>): StateDiagram {
+    private fun plantUmlParse(source: List<StringLocated>): StateDiagram {
         val umlSource = UmlSource.create(source, false)
         val diagram = StateDiagramFactory().createSystem(umlSource, HashMap<String, String>())
         if (diagram !is StateDiagram)
