@@ -38,6 +38,10 @@ Arguments:
     4. StateDiagramNameConfig.hpp
 - Everything that starts with a capital letter it is intended to be a constant or an enum entry, so you're are supposed to declare it outside of the State Diagram's class
 
+## TODO
+
+- use iterator element `it` of Kotlin
+
 ## Credits
 
 - [Convert icons created by Freepik - Flaticon](https://www.flaticon.com/free-icons/convert) for the icon used in the executable for the Windows version
