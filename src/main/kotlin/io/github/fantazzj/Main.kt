@@ -38,13 +38,14 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
         if (verbose)
             println("Input file is \"$inputFile\"")
 
-        val source = ArrayList<StringLocated>()
-        inputFile.forEachLine { l ->
-            source.add(StringLocated(l, null))
-        }
-        source.removeIf { l ->
+        val source = inputFile.readLines().map { l ->
+            StringLocated(l, null)
+        }.filterNot { l ->
             l.type == TLineType.COMMENT_SIMPLE || l.string.isBlank()
+        }.map { l ->
+            l.removeInnerComment()
         }
+
         return source
     }
 

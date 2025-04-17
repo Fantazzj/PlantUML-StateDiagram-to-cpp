@@ -2,9 +2,10 @@
 hide empty description
 
 'Simple comment
+/'Simple comment'/
 
 state Opening : handState = Open
-state Opening : statoMano = Aperto
+state Opening : statoMano = Aperto /' inline comment '/
 state Closing : handState = Grab
 
 [*] -down-> Opening
@@ -13,5 +14,7 @@ Opening -down-> Closing : azzardo==vero
 Opening -down-> Fake : azzardo==false
 
 BlockOpen -up-> Opening : hazard==false
+
+Closing -l-> BlockOpen : elapsedMillis >= 1000
 
 @enduml
