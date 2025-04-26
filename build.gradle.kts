@@ -32,7 +32,6 @@ tasks.withType<Jar> {
     manifest {
         attributes["Main-Class"] = "io.github.fantazzj.MainKt"
         attributes["Class-Path"] = configurations.runtimeClasspath.get().joinToString(separator = " ") { f -> f.name }
-        println(attributes["Class-Path"])
     }
 }
 
