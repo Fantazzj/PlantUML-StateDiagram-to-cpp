@@ -57,7 +57,7 @@ tasks.withType<Jar> {
 
 tasks.register<Zip>("createReleaseGithub") {
     group = "releases"
-    dependsOn("createExe")
+    dependsOn("createExe", "jre")
     from("build/launch4j/")
     include("**")
     into("jre") {
