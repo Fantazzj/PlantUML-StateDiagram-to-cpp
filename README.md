@@ -40,7 +40,7 @@ Arguments:
 
 ## TODO
 
-- use iterator element `it` of Kotlin
+- [ ] use iterator element `it` of Kotlin
 
 ## Credits
 
