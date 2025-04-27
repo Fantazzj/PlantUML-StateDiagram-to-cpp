@@ -12,7 +12,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("net.sourceforge.plantuml:plantuml:1.2025.0")
+    implementation("net.sourceforge.plantuml:plantuml:1.2025.2")
     implementation("com.github.ajalt.clikt:clikt:5.0.2")
     testImplementation(kotlin("test"))
 }

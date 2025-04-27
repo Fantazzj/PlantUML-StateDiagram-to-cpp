@@ -9,10 +9,12 @@ import com.github.ajalt.clikt.parameters.types.path
 import io.github.fantazzj.statediagram.converter.Converter
 import io.github.fantazzj.statediagram.converter.cxx.CxxConverter
 import io.github.fantazzj.statediagram.structure.State
+import net.sourceforge.plantuml.Previous
 import net.sourceforge.plantuml.Run
 import net.sourceforge.plantuml.abel.Entity
 import net.sourceforge.plantuml.abel.Link
 import net.sourceforge.plantuml.core.UmlSource
+import net.sourceforge.plantuml.preproc.PreprocessingArtifact
 import net.sourceforge.plantuml.statediagram.StateDiagram
 import net.sourceforge.plantuml.statediagram.StateDiagramFactory
 import net.sourceforge.plantuml.text.StringLocated
@@ -51,7 +53,7 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
 
     private fun plantUmlParse(source: List<StringLocated>): StateDiagram {
         val umlSource = UmlSource.create(source, false)
-        val diagram = StateDiagramFactory().createSystem(umlSource, HashMap<String, String>())
+        val diagram = StateDiagramFactory().createSystem(umlSource, Previous.createEmpty(), PreprocessingArtifact())
         if (diagram !is StateDiagram)
             throw Exception("Given PlantUML is not a StateDiagram")
         return diagram
