@@ -20,7 +20,7 @@ class CxxConverter(name: String, states: Collection<State>) : Converter(name, st
         cppConverter.saveToDir(outDir)
         hppConverter.saveToDir(outDir)
         enumConverter.saveToDir(outDir)
-        if (!Path(outDir.toString(), getName()+"Config.hpp").exists())
+        if (!Path(outDir.toString(), getName() + "Config.hpp").exists())
             configConverter.saveToDir(outDir)
     }
 
@@ -31,11 +31,9 @@ class CxxConverter(name: String, states: Collection<State>) : Converter(name, st
             val variables = HashSet<String>()
             val parseAndAdd = { text: String ->
                 parserRegex.findAll(text)
-                    .filter { m -> m.value !in setOf("true", "false", "elapsedMillis") }
-                    .filter { m -> !m.value.contains('.') }
-                    .forEach { m ->
-                        variables.add(m.value)
-                    }
+                    .filter { it.value !in setOf("true", "false", "elapsedMillis") }
+                    .filter { !it.value.contains('.') }
+                    .forEach { variables.add(it.value) }
             }
 
             states.forEach { s ->
@@ -50,9 +48,9 @@ class CxxConverter(name: String, states: Collection<State>) : Converter(name, st
             val objects = HashSet<String>()
             val parseAndAdd = { text: String ->
                 parserRegex.findAll(text)
-                    .forEach { m ->
-                        if (m.value.contains('.'))
-                            objects.add(m.value.split('.').first())
+                    .forEach {
+                        if (it.value.contains('.'))
+                            objects.add(it.value.split('.').first())
                     }
             }
 

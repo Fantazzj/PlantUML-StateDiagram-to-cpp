@@ -43,18 +43,18 @@ class ConfigConverter(name: String, states: Collection<State>) : Converter(name,
     }
 
     private fun defineVariablesTypes(out: PrintWriter) {
-        variables.forEach { v ->
-            out.println("typedef int ${getName()}_${v}_t;")
+        variables.forEach {
+            out.println("typedef int ${getName()}_${it}_t;")
         }
 
-        objects.forEach { o ->
-            out.println("typedef int ${getName()}_${o}_t;")
+        objects.forEach {
+            out.println("typedef int ${getName()}_${it}_t;")
         }
     }
 
     private fun defineVariablesInitialValue(out: PrintWriter) {
-        variables.forEach { v ->
-            out.println("#define ${getName().uppercase()}_${v.uppercase()} 0")
+        variables.forEach {
+            out.println("#define ${getName().uppercase()}_${it.uppercase()} 0")
         }
     }
 

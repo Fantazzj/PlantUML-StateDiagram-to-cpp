@@ -29,9 +29,7 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
     private val inputFile by argument(help = "input PlantUML file (needs correct extension)").file(
         mustExist = true,
         canBeDir = false
-    ).check { f ->
-        f.name.contains(extensionRegex)
-    }
+    ).check { it.name.contains(extensionRegex) }
     private val verbose by option("-v", "--verbose", help = "print all information").flag()
     private val outputImage by option("--image", help = "create also a png image of the diagram").flag()
     private val nullableOutputDir by option("-o", "--output", help = "path to output folder").path()
@@ -40,12 +38,12 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
         if (verbose)
             println("Input file is \"$inputFile\"")
 
-        val source = inputFile.readLines().map { l ->
-            StringLocated(l, null)
-        }.filterNot { l ->
-            l.type == TLineType.COMMENT_SIMPLE || l.string.isBlank()
-        }.map { l ->
-            l.removeInnerComment()
+        val source = inputFile.readLines().map {
+            StringLocated(it, null)
+        }.filterNot {
+            it.type == TLineType.COMMENT_SIMPLE || it.string.isBlank()
+        }.map {
+            it.removeInnerComment()
         }
 
         return source
@@ -61,21 +59,21 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
 
     private fun plantUmlLog(links: Collection<Link>, leafs: Collection<Entity>) {
         println("Parsed states by PlantUML:")
-        leafs.forEach { l ->
-            println(" - ${l.name}")
-            println(" - \t${l.bodier.rawBody}")
+        leafs.forEach {
+            println(" - ${it.name}")
+            println(" - \t${it.bodier.rawBody}")
         }
         println("Parsed transitions by PlantUML:")
-        links.forEach { l ->
-            println(" - ${l.entity1.name} --${l.label}-> ${l.entity2.name}")
+        links.forEach {
+            println(" - ${it.entity1.name} --${it.label}-> ${it.entity2.name}")
         }
     }
 
     private fun plantUmlToMine(diagram: StateDiagram): Collection<State> {
         val leafs = diagram.currentGroup.leafs()
-        val links = diagram.links.map { l ->
-            if (l.isInverted) l.inv
-            else l
+        val links = diagram.links.map {
+            if (it.isInverted) it.inv
+            else it
         }
 
         if (verbose)

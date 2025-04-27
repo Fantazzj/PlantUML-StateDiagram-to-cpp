@@ -50,9 +50,9 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
 
     private fun publicMethods(out: PrintWriter) {
         out.print("\texplicit ${getName()}(")
-        objects.forEach { o ->
-            out.print("${getName()}_${o}_t $o")
-            if (o != objects.last())
+        objects.forEach {
+            out.print("${getName()}_${it}_t $it")
+            if (it != objects.last())
                 out.print(", ")
         }
         out.println(");")
@@ -62,12 +62,12 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
     }
 
     private fun publicAttributes(out: PrintWriter) {
-        variables.forEach { v ->
-            out.println("\t${getName()}_${v}_t $v;")
+        variables.forEach {
+            out.println("\t${getName()}_${it}_t $it;")
         }
 
-        objects.forEach { o ->
-            out.println("\t${getName()}_${o}_t $o;")
+        objects.forEach {
+            out.println("\t${getName()}_${it}_t $it;")
         }
 
         out.println("\t#ifdef ${getName().uppercase()}_ADDITIONAL_PUBLIC_ATT")
