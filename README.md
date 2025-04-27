@@ -13,7 +13,7 @@ The software uses the official [PlantUML.jar](https://plantuml.com/download) to 
 
 ## How to use it
 
-If you're on Windows you can download the Windows version, there you can find a `plantuml-conv.exe`, you can simply drag the PlantUML file on it and it will create a folder named as your original file, it contains the whole C++ implementation
+If you're on Windows you can download the Windows version, there you can find a `plantuml-conv.exe`, you can simply drag the PlantUML file on it and it will create a folder named as your original file, it contains the whole C++ implementation.
 You can also use the command line:
 ```text
 Usage: PlantUML-StateMachine-to-cpp [<options>] <inputfile>
@@ -40,7 +40,7 @@ Arguments:
 
 ## TODO
 
-- use iterator element `it` of Kotlin
+- [ ] use iterator element `it` of Kotlin
 
 ## Credits
 
