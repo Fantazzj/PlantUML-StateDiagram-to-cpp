@@ -1,15 +1,14 @@
-FROM gradle:jdk21-alpine AS env
+FROM eclipse-temurin:17-alpine AS env
 LABEL authors="Fantazzj"
 
 FROM env AS build
 LABEL authors="Fantazzj"
-WORKDIR /tmp/src
-COPY . .
-RUN gradle build
 WORKDIR /app
-RUN tar -C . -xf /tmp/src/build/distributions/plantuml-statediagram-to-cpp-0.1.tar plantuml-statediagram-to-cpp-0.1/lib/
+COPY . .
+RUN ./gradlew installDist
 
-FROM build AS run
+FROM eclipse-temurin:17-jre-alpine AS run
 LABEL authors="Fantazzj"
-WORKDIR /app/plantuml-statediagram-to-cpp-0.1/lib
+COPY --from=build /app/build/install/plantuml-statediagram-to-cpp/lib /app
+WORKDIR /app
 ENTRYPOINT ["java", "-jar", "plantuml-statediagram-to-cpp-0.1.jar"]

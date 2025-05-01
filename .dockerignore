@@ -4,8 +4,6 @@
 .kotlin
 build
 diagram-test
-gradle
 .gitignore
 Dockerfile
-gradlew
 gradlew.bat
