@@ -118,3 +118,8 @@ tasks.register<Zip>("createReleaseGithub") {
     archiveFileName.set("PlantUML-StateDiagram-to-cpp.zip")
     destinationDirectory.set(file("build/releases"))
 }
+
+val distZip by tasks
+distZip.enabled = false
+val distTar by tasks
+distTar.enabled = false
