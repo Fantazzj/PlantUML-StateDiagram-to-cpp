@@ -73,7 +73,7 @@ version = "0.1"
 tasks.withType<Jar> {
     manifest {
         attributes["Main-Class"] = application.mainClass
-        attributes["Class-Path"] = configurations.runtimeClasspath.get().joinToString(separator = " ") { f -> f.name }
+        attributes["Class-Path"] = configurations.runtimeClasspath.get().joinToString(separator = " ") { it.name }
     }
 }
 
