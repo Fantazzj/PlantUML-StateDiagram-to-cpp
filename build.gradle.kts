@@ -87,8 +87,21 @@ tasks.register<Zip>("createReleaseGithub") {
         from("build/jre")
         include("**")
     }
-    archiveFileName.set("PlantUML-StateDiagram-to-cpp.zip")
-    destinationDirectory.set(file("build/releases"))
+    archiveFileName = "PlantUML-StateDiagram-to-cpp.zip"
+    destinationDirectory = file("build/releases/windows")
+}
+
+tasks.register<Copy>("createReleaseDocker") {
+    group = "releases"
+    dependsOn("installDist", "jre")
+    from("LICENSE", "README.md")
+    from("build/install/plantuml-statediagram-to-cpp/lib")
+    include("**")
+    into("jre") {
+        from("build/jre")
+        include("**")
+    }
+    destinationDir = file("build/releases/docker")
 }
 
 val distZip by tasks
