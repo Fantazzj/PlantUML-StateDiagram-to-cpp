@@ -66,10 +66,6 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
             out.println("\t${getName()}_${it}_t $it;")
         }
 
-        objects.forEach {
-            out.println("\t${getName()}_${it}_t $it;")
-        }
-
         out.println("\t#ifdef ${getName().uppercase()}_ADDITIONAL_PUBLIC_ATT")
         out.println("\t${getName().uppercase()}_ADDITIONAL_PUBLIC_ATT")
         out.println("\t#endif")
@@ -83,6 +79,11 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
         out.println("\t${getName()}State oldState;")
         out.println("\tunsigned long previousMillis;")
         out.println("\tunsigned long elapsedMillis;")
+
+        objects.forEach {
+            out.println("\t${getName()}_${it}_t $it;")
+        }
+
         out.println("\t#ifdef ${getName().uppercase()}_ADDITIONAL_PRIVATE_ATT")
         out.println("\t${getName().uppercase()}_ADDITIONAL_PRIVATE_ATT")
         out.println("\t#endif")
