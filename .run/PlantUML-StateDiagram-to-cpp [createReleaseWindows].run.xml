@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="PlantUML-StateDiagram-to-cpp [createReleaseGithub]" type="GradleRunConfiguration" factoryName="Gradle">
+  <configuration default="false" name="PlantUML-StateDiagram-to-cpp [createReleaseWindows]" type="GradleRunConfiguration" factoryName="Gradle">
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -10,7 +10,7 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value="createReleaseGithub" />
+          <option value="createReleaseWindows" />
         </list>
       </option>
       <option name="vmOptions" />

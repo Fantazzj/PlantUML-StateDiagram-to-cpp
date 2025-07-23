@@ -77,7 +77,7 @@ tasks.withType<Jar> {
     }
 }
 
-tasks.register<Zip>("createReleaseGithub") {
+tasks.register<Zip>("createReleaseWindows") {
     group = "releases"
     dependsOn("createExe", "jre")
     from("LICENSE", "README.md")
@@ -87,11 +87,11 @@ tasks.register<Zip>("createReleaseGithub") {
         from("build/jre")
         include("**")
     }
-    archiveFileName = "PlantUML-StateDiagram-to-cpp.zip"
-    destinationDirectory = file("build/releases/windows")
+    archiveFileName = "PlantUML-StateDiagram-to-cpp-windows.zip"
+    destinationDirectory = file("build/releases")
 }
 
-tasks.register<Copy>("createReleaseDocker") {
+tasks.register<Zip>("createReleaseLinux") {
     group = "releases"
     dependsOn("installDist", "jre")
     from("LICENSE", "README.md")
@@ -101,7 +101,8 @@ tasks.register<Copy>("createReleaseDocker") {
         from("build/jre")
         include("**")
     }
-    destinationDir = file("build/releases/docker")
+    archiveFileName = "PlantUML-StateDiagram-to-cpp-linux.zip"
+    destinationDirectory = file("build/releases")
 }
 
 val distZip by tasks
