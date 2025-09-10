@@ -22,8 +22,6 @@ A --> H
 J --> I
 E --> B
 
-/'
 B->C : commented out
-'/
 
 @enduml
