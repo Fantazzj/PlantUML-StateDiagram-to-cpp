@@ -70,7 +70,10 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
     }
 
     private fun plantUmlToMine(diagram: StateDiagram): Collection<State> {
-        val leafs = diagram.currentGroup.leafs()
+        //val leafs = diagram.currentGroup.leafs()
+        val leafs = diagram.currentGroup.leafs() +
+                diagram.groups().flatMap { it.leafs() }
+
         val links = diagram.links.map {
             if (it.isInverted) it.inv
             else it
