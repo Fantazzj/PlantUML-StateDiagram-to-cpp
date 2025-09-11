@@ -5,13 +5,15 @@ state B
 state C
 state D
 
-state Group1 {
+'Group 1
+state Group1 { /'1'/
 state E
 state F
 state G
 }
 
-State Group2 {
+/'Group 2 '/
+State Group2 { /'2'/
 state H
 state I
 state J
@@ -22,6 +24,10 @@ A --> H
 J --> I
 E --> B
 
+/'
+
 B->C : commented out
+
+'/
 
 @enduml

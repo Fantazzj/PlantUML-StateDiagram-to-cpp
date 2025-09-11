@@ -15,10 +15,11 @@ import net.sourceforge.plantuml.abel.Entity
 import net.sourceforge.plantuml.abel.Link
 import net.sourceforge.plantuml.core.UmlSource
 import net.sourceforge.plantuml.preproc.PreprocessingArtifact
+import net.sourceforge.plantuml.preproc.ReadLineList
+import net.sourceforge.plantuml.preproc2.ReadFilterQuoteComment
 import net.sourceforge.plantuml.statediagram.StateDiagram
 import net.sourceforge.plantuml.statediagram.StateDiagramFactory
 import net.sourceforge.plantuml.text.StringLocated
-import net.sourceforge.plantuml.text.TLineType
 import java.io.File
 import java.nio.file.Paths
 
@@ -38,13 +39,17 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
         if (verbose)
             println("Input file is \"$inputFile\"")
 
-        val source = inputFile.readLines().map {
-            StringLocated(it, null)
-        }.filterNot {
-            it.type == TLineType.COMMENT_SIMPLE || it.string.isBlank()
-        }.map {
-            it.removeInnerComment()
-        }
+        val rl = ReadFilterQuoteComment().applyFilter(ReadLineList(inputFile.readLines(), null))
+
+        val source = ArrayList<StringLocated>()
+        do {
+            val line = rl.readLine()
+            if (line == null)
+                break
+            if (line.string.isNotBlank())
+                source.add(line)
+        } while (true)
+        rl.close()
 
         return source
     }
