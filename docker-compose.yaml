@@ -11,7 +11,7 @@ services:
 
   linux-builder:
     container_name: linux
-    image: "eclipse-temurin:17-alpine"
+    image: "eclipse-temurin:17"
     volumes:
       - .:/app
     working_dir: /app
