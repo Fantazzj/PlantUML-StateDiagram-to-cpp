@@ -91,7 +91,7 @@ tasks.register<Zip>("createReleaseWindows") {
     destinationDirectory = file("build/releases")
 }
 
-tasks.register<Zip>("createReleaseLinux") {
+tasks.register<Tar>("createReleaseLinux") {
     group = "releases"
     dependsOn("installDist", "jre")
     from("LICENSE", "README.md")
@@ -101,7 +101,8 @@ tasks.register<Zip>("createReleaseLinux") {
         from("build/jre")
         include("**")
     }
-    archiveFileName = "PlantUML-StateDiagram-to-cpp-linux.zip"
+    compression = Compression.GZIP
+    archiveFileName = "PlantUML-StateDiagram-to-cpp-linux.tar.gz"
     destinationDirectory = file("build/releases")
 }
 
