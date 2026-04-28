@@ -49,11 +49,10 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
     }
 
     private fun publicMethods(out: PrintWriter) {
-        out.print("\texplicit ${getName()}(")
+        out.print("\texplicit ${getName()}(Timer& timer")
         objects.forEach {
+            out.print(", ")
             out.print("${getName()}_${it}_t $it")
-            if (it != objects.last())
-                out.print(", ")
         }
         out.println(");")
         out.println("\tvoid autoCycle();")
@@ -79,6 +78,7 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
         out.println("\t${getName()}State oldState;")
         out.println("\tunsigned long previousMillis;")
         out.println("\tunsigned long elapsedMillis;")
+        out.println("\tTimer& timer;")
 
         objects.forEach {
             out.println("\t${getName()}_${it}_t $it;")

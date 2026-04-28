@@ -52,19 +52,15 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
     }
 
     private fun writeConstructor(out: PrintWriter) {
-        out.print("${getName()}::${getName()}(")
+        out.print("${getName()}::${getName()}(Timer& timer")
         objects.forEach { o ->
+            out.print(", ")
             out.print("${getName()}_${o}_t $o")
-            if (o != objects.last())
-                out.print(", ")
         }
-        out.print(")")
+        out.print(") : timer(timer) ")
         objects.forEach { o ->
-            if (o == objects.first())
-                out.print(" : ")
+            out.print(", ")
             out.print("$o($o)")
-            if (o != objects.last())
-                out.print(", ")
         }
         out.println("{")
         out.println("\tthis->newState = ${getName()}State::${getFirstState().getName()};")
@@ -81,13 +77,13 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
         out.println("void ${getName()}::changeState(${getName()}State newState) {")
         out.println("\tthis->newState = newState;")
         out.println("\telapsedMillis = 0;")
-        out.println("\tpreviousMillis = ${getName().uppercase()}_MILLISECONDS;")
+        out.println("\tpreviousMillis = timer.millis();")
         out.println("}")
     }
 
     private fun writeAutoCycle(out: PrintWriter) {
         out.println("void ${getName()}::autoCycle() {")
-        out.println("\telapsedMillis = ${getName().uppercase()}_MILLISECONDS - previousMillis;")
+        out.println("\telapsedMillis = timer.millis() - previousMillis;")
         out.println("\tswitch(newState) {")
         for (state in getStates()) {
             out.println("\t\tcase ${getName()}State::${state.getName()}:")
