@@ -15,7 +15,7 @@ abstract class Converter(private val name: String, states: Collection<State>) {
                     ss.getName() == "*start*"
                 }.getTransitions().first().to
             }
-        } catch (e: NoSuchElementException) {
+        } catch (_: NoSuchElementException) {
             println("Error")
             println("Missing initial state")
             exitProcess(1)
