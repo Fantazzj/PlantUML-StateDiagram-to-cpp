@@ -38,7 +38,7 @@ class CxxConverter(name: String, states: Collection<State>) : Converter(name, st
 
             states.forEach { s ->
                 s.getTransitions().forEach { t -> parseAndAdd(t.getCondition()) }
-                s.getActions().forEach { a -> parseAndAdd(a.getAction()) }
+                s.getActions().forEach { a -> parseAndAdd(a.action) }
             }
 
             return variables
@@ -56,7 +56,7 @@ class CxxConverter(name: String, states: Collection<State>) : Converter(name, st
 
             states.forEach { s ->
                 s.getTransitions().forEach { t -> parseAndAdd(t.getCondition()) }
-                s.getActions().forEach { a -> parseAndAdd(a.getAction()) }
+                s.getActions().forEach { a -> parseAndAdd(a.action) }
             }
 
             return objects

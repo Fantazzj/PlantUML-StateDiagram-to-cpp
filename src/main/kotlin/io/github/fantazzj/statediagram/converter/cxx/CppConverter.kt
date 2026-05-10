@@ -43,7 +43,7 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
         for (state in getStates()) {
             out.println("\t\tcase ${getName()}State::${state.getName()}:")
             for (action in state.getActions())
-                out.println("\t\t\t${action.getAction()};")
+                out.println("\t\t\t${action.action};")
             out.println("\t\t\tbreak;")
         }
         //out.println("\t\tdefault:")
