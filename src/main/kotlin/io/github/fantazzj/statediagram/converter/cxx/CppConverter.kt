@@ -41,8 +41,8 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
         out.println("\toldState = newState;")
         out.println("\tswitch(newState) {")
         for (state in getStates()) {
-            out.println("\t\tcase ${getName()}State::${state.getName()}:")
-            for (action in state.getActions())
+            out.println("\t\tcase ${getName()}State::${state.name}:")
+            for (action in state.actions)
                 out.println("\t\t\t${action.action};")
             out.println("\t\t\tbreak;")
         }
@@ -63,8 +63,8 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
             out.print("$o($o)")
         }
         out.println("{")
-        out.println("\tthis->newState = ${getName()}State::${getFirstState().getName()};")
-        out.println("\tthis->oldState = ${getName()}State::${getFirstState().getName()};")
+        out.println("\tthis->newState = ${getName()}State::${getFirstState().name};")
+        out.println("\tthis->oldState = ${getName()}State::${getFirstState().name};")
         out.println("\tthis->elapsedMillis = 0;")
         out.println("\tthis->previousMillis = 0;")
         variables.forEach { v ->
@@ -86,10 +86,10 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
         out.println("\telapsedMillis = timer.millis() - previousMillis;")
         out.println("\tswitch(newState) {")
         for (state in getStates()) {
-            out.println("\t\tcase ${getName()}State::${state.getName()}:")
-            if (state.getTransitions().isEmpty())
+            out.println("\t\tcase ${getName()}State::${state.name}:")
+            if (state.transitions.isEmpty())
                 out.println("\t\t\tbreak;")
-            else for (transition in state.getTransitions()) {
+            else for (transition in state.transitions) {
                 if (transition.condition == "true") {
                     out.println("\t\t\tchangeState(${getName()}State::${transition.to});")
                 } else {

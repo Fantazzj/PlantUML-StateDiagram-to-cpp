@@ -8,7 +8,9 @@ import com.github.ajalt.clikt.parameters.types.file
 import com.github.ajalt.clikt.parameters.types.path
 import io.github.fantazzj.statediagram.converter.Converter
 import io.github.fantazzj.statediagram.converter.cxx.CxxConverter
+import io.github.fantazzj.statediagram.structure.Action
 import io.github.fantazzj.statediagram.structure.State
+import io.github.fantazzj.statediagram.structure.Transition
 import net.sourceforge.plantuml.Previous
 import net.sourceforge.plantuml.Run as PlantUmlJar
 import net.sourceforge.plantuml.abel.Entity
@@ -87,22 +89,28 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
 
         val states = ArrayList<State>()
         leafs.forEach { l ->
-            val state = State(l.name)
+            val name = l.name
+
+            val actions = ArrayList<Action>()
             l.bodier.rawBody.forEach { b ->
-                state.addAction(b.toString())
+                actions.add(Action(b.toString()))
             }
-            states.add(state)
-        }
-        links.forEach { l ->
-            states.forEach { s ->
-                if (l.entity1.name == s.getName())
-                    s.addTransition(
-                        l.entity2.name,
-                        if (l.label.size() > 0) l.label.get(0).toString()
-                        else "true"
-                    )
+
+            val transitions = ArrayList<Transition>()
+            links.forEach { l ->
+                states.forEach { s ->
+                    if (l.entity1.name == name)
+                        transitions.add(Transition(
+                            l.entity2.name,
+                            if (l.label.size() > 0) l.label.get(0).toString()
+                            else "true"
+                        ))
+                }
             }
+
+            states.add(State(l.name, transitions, actions))
         }
+
         return states
     }
 

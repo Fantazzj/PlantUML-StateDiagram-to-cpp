@@ -6,14 +6,14 @@ import kotlin.system.exitProcess
 
 abstract class Converter(private val name: String, states: Collection<State>) {
 
-    private val states = states.filter { s -> !s.getName().contains("*") }
+    private val states = states.filter { s -> !s.name.contains("*") }
 
     private val firstState =
         try {
             states.first { s ->
-                s.getName() == states.first { ss ->
-                    ss.getName() == "*start*"
-                }.getTransitions().first().to
+                s.name == states.first { ss ->
+                    ss.name == "*start*"
+                }.transitions.first().to
             }
         } catch (_: NoSuchElementException) {
             println("Error")

@@ -19,7 +19,7 @@ class EnumConverter(name: String, states: Collection<State>) : Converter(name, s
             out.println("#define ${getName().uppercase()}_ENUM_HPP")
             out.println()
             out.println("enum class ${getName()}State : int {")
-            getStates().forEach { out.println("\t${it.getName()},") }
+            getStates().forEach { out.println("\t${it.name},") }
             out.println("};")
             out.println()
             out.println("#endif //${getName().uppercase()}_ENUM_HPP")
