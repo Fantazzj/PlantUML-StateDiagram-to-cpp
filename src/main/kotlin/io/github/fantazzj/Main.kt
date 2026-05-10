@@ -54,7 +54,7 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
         return source
     }
 
-    private fun plantUmlParse(source: List<StringLocated>): StateDiagram {
+    private fun parsePlantUmlSource(source: List<StringLocated>): StateDiagram {
         val umlSource = UmlSource.create(source, false)
         val diagram = StateDiagramFactory().createSystem(umlSource, Previous.createEmpty(), PreprocessingArtifact())
         if (diagram !is StateDiagram)
@@ -74,8 +74,7 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
         }
     }
 
-    private fun plantUmlToMine(diagram: StateDiagram): Collection<State> {
-        //val leafs = diagram.currentGroup.leafs()
+    private fun convertPlantUmlDiagram(diagram: StateDiagram): Collection<State> {
         val leafs = diagram.currentGroup.leafs() +
                 diagram.groups().flatMap { it.leafs() }
 
@@ -115,11 +114,10 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
     }
 
     override fun run() {
-        val source = readFile(inputFile)
-
-        val diagram = plantUmlParse(source)
-
-        val states = plantUmlToMine(diagram)
+        val states = inputFile
+            .let(::readFile)
+            .let(::parsePlantUmlSource)
+            .let(::convertPlantUmlDiagram)
 
         val diagramName = inputFile.name.replace(extensionRegex, "")
         if (verbose) {
