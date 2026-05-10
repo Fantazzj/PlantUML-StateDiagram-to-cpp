@@ -88,27 +88,27 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
             plantUmlLog(links, leafs)
 
         val states = ArrayList<State>()
-        leafs.forEach { l ->
-            val name = l.name
+        leafs.forEach {
+            val name = it.name
 
             val actions = ArrayList<Action>()
-            l.bodier.rawBody.forEach { b ->
-                actions.add(Action(b.toString()))
+            it.bodier.rawBody.forEach {
+                actions.add(Action(it.toString()))
             }
 
             val transitions = ArrayList<Transition>()
-            links.forEach { l ->
-                states.forEach { s ->
-                    if (l.entity1.name == name)
-                        transitions.add(Transition(
-                            l.entity2.name,
-                            if (l.label.size() > 0) l.label.get(0).toString()
-                            else "true"
-                        ))
+            links
+                .filter { it.entity1.name == name }
+                .forEach {
+                    transitions.add(
+                        Transition(
+                            to = it.entity2.name,
+                            condition = if (it.label.size() > 0) it.label.get(0).toString() else "true"
+                        )
+                    )
                 }
-            }
 
-            states.add(State(l.name, transitions, actions))
+            states.add(State(name, transitions, actions))
         }
 
         return states
