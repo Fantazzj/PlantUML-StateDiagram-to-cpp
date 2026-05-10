@@ -10,7 +10,7 @@ import io.github.fantazzj.statediagram.converter.Converter
 import io.github.fantazzj.statediagram.converter.cxx.CxxConverter
 import io.github.fantazzj.statediagram.structure.State
 import net.sourceforge.plantuml.Previous
-import net.sourceforge.plantuml.Run
+import net.sourceforge.plantuml.Run as PlantUmlJar
 import net.sourceforge.plantuml.abel.Entity
 import net.sourceforge.plantuml.abel.Link
 import net.sourceforge.plantuml.core.UmlSource
@@ -43,9 +43,7 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
 
         val source = ArrayList<StringLocated>()
         do {
-            val line = rl.readLine()
-            if (line == null)
-                break
+            val line = rl.readLine() ?: break
             if (line.string.isNotBlank())
                 source.add(line)
         } while (true)
@@ -132,7 +130,7 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
         converter.saveToDir(outputDir)
 
         if (outputImage)
-            Run.main(arrayOf(inputFile.absolutePath, "-o", outputDir.toString()))
+            PlantUmlJar.main(arrayOf(inputFile.absolutePath, "-o", outputDir.toString()))
     }
 
 }
