@@ -90,11 +90,11 @@ class CppConverter(name: String, states: Collection<State>) : Converter(name, st
             if (state.getTransitions().isEmpty())
                 out.println("\t\t\tbreak;")
             else for (transition in state.getTransitions()) {
-                if (transition.getCondition() == "true") {
-                    out.println("\t\t\tchangeState(${getName()}State::${transition.getTo()});")
+                if (transition.condition == "true") {
+                    out.println("\t\t\tchangeState(${getName()}State::${transition.to});")
                 } else {
-                    out.println("\t\t\tif(${transition.getCondition()}) {")
-                    out.println("\t\t\t\tchangeState(${getName()}State::${transition.getTo()});")
+                    out.println("\t\t\tif(${transition.condition}) {")
+                    out.println("\t\t\t\tchangeState(${getName()}State::${transition.to});")
                     out.println("\t\t\t\tbreak;")
                     out.println("\t\t\t}")
                 }

@@ -13,7 +13,7 @@ abstract class Converter(private val name: String, states: Collection<State>) {
             states.first { s ->
                 s.getName() == states.first { ss ->
                     ss.getName() == "*start*"
-                }.getTransitions().first().getTo()
+                }.getTransitions().first().to
             }
         } catch (e: NoSuchElementException) {
             println("Error")
