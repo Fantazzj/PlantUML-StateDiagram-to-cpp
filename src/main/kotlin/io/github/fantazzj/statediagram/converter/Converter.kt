@@ -5,7 +5,7 @@ import java.nio.file.Path
 
 abstract class Converter(private val diagram: Diagram) {
 
-    private val states = diagram.states.filter { s -> !s.name.contains("*") }
+    private val states = diagram.states
 
     fun getFirstState() = diagram.firstState
 
