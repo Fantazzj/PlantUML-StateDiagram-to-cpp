@@ -8,18 +8,7 @@ abstract class Converter(private val diagram: Diagram) {
 
     private val states = diagram.states.filter { s -> !s.name.contains("*") }
 
-    private val firstState =
-        try {
-            diagram.states.first {
-                it.name == diagram.states.first { it.name == "*start*" }.transitions.first().to
-            }
-        } catch (_: NoSuchElementException) {
-            println("Error")
-            println("Missing initial state")
-            exitProcess(1)
-        }
-
-    fun getFirstState() = firstState
+    fun getFirstState() = diagram.firstState
 
     fun getName() = diagram.name
 
