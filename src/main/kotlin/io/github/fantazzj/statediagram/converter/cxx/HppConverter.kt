@@ -9,7 +9,7 @@ class HppConverter(private val diagram: Diagram) : Converter {
 
     private val objects = CxxConverter.getObjects(diagram.states)
 
-    override fun convert(): String {
+    override fun convert(diagram: Diagram): String {
         val out = StringBuilder()
         addHppContent(out)
         return out.toString()

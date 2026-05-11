@@ -5,7 +5,7 @@ import io.github.fantazzj.statediagram.structure.Diagram
 
 class EnumConverter(private val diagram: Diagram) : Converter {
 
-    override fun convert(): String {
+    override fun convert(diagram: Diagram): String {
         val out = StringBuilder()
         addEnumContent(out)
         return out.toString()

@@ -3,70 +3,82 @@ package io.github.fantazzj.statediagram.converter.cxx
 import io.github.fantazzj.statediagram.converter.Converter
 import io.github.fantazzj.statediagram.structure.Diagram
 
-class ConfigConverter(private val diagram: Diagram) : Converter {
+typealias Assembler = (StringBuilder) -> Unit
 
-    private val variables = CxxConverter.getVariables(diagram.states)
+object ConfigConverter : Converter {
 
-    private val objects = CxxConverter.getObjects(diagram.states)
+    override fun convert(diagram: Diagram): String {
+        val variables = CxxConverter.getVariables(diagram.states)
+        val objects = CxxConverter.getObjects(diagram.states)
 
-    override fun convert(): String {
-        val out = StringBuilder()
-        addConfigContent(out)
+        val out = getConfigContent(diagram, variables, objects)
         return out.toString()
     }
 
-    private fun addConfigContent(out: StringBuilder) {
-        out
-            .also(::openIncludeGuards)
+    private fun getConfigContent(diagram: Diagram, variables: Collection<String>, objects: Collection<String>): StringBuilder {
+        return StringBuilder()
+            .also(openIncludeGuards(diagram))
             .appendLine()
-            .also(::defineHardwareSpecific)
+            .also(defineHardwareSpecific(diagram))
             .appendLine()
-            .also(::defineVariablesTypes)
+            .also(defineVariablesTypes(diagram, variables, objects))
             .appendLine()
-            .also(::defineVariablesInitialValue)
+            .also(defineVariablesInitialValue(diagram, variables))
             .appendLine()
-            .also(::defineAdditionalAttributes)
+            .also(defineAdditionalAttributes(diagram))
             .appendLine()
-            .also(::closeIncludeGuards)
+            .also(closeIncludeGuards(diagram))
     }
 
-    private fun openIncludeGuards(out: StringBuilder) {
-        out.appendLine("#ifndef ${diagram.name.uppercase()}_CONFIG_HPP")
-        out.appendLine("#define ${diagram.name.uppercase()}_CONFIG_HPP")
-    }
-
-    private fun defineHardwareSpecific(out: StringBuilder) {
-        out.appendLine("//for arduino:")
-        out.appendLine("//#define ${diagram.name.uppercase()}_MILLISECONDS millis()")
-        out.appendLine("#ifndef ${diagram.name.uppercase()}_MILLISECONDS")
-        out.appendLine("#error \"didn't define the hardware specific ${diagram.name.uppercase()}_MILLISECONDS function\"")
-        out.appendLine("#endif")
-    }
-
-    private fun defineVariablesTypes(out: StringBuilder) {
-        variables.forEach {
-            out.appendLine("typedef int ${diagram.name}_${it}_t;")
-        }
-
-        objects.forEach {
-            out.appendLine("typedef int ${diagram.name}_${it}_t;")
+    private fun openIncludeGuards(diagram: Diagram): Assembler {
+        return { out ->
+            out.appendLine("#ifndef ${diagram.name.uppercase()}_CONFIG_HPP")
+            out.appendLine("#define ${diagram.name.uppercase()}_CONFIG_HPP")
         }
     }
 
-    private fun defineVariablesInitialValue(out: StringBuilder) {
-        variables.forEach {
-            out.appendLine("#define ${diagram.name.uppercase()}_${it.uppercase()} 0")
+    private fun defineHardwareSpecific(diagram: Diagram): Assembler {
+        return { out ->
+            out.appendLine("//for arduino:")
+            out.appendLine("//#define ${diagram.name.uppercase()}_MILLISECONDS millis()")
+            out.appendLine("#ifndef ${diagram.name.uppercase()}_MILLISECONDS")
+            out.appendLine("#error \"didn't define the hardware specific ${diagram.name.uppercase()}_MILLISECONDS function\"")
+            out.appendLine("#endif")
         }
     }
 
-    private fun defineAdditionalAttributes(out: StringBuilder) {
-        out.appendLine("//if are unused can be safely deleted these two lines")
-        out.appendLine("#define ${diagram.name.uppercase()}_ADDITIONAL_PRIVATE_ATT void* foo_priv")
-        out.appendLine("#define ${diagram.name.uppercase()}_ADDITIONAL_PUBLIC_ATT void* foo_public")
+    private fun defineVariablesTypes(diagram: Diagram, variables: Collection<String>, objects: Collection<String>): Assembler {
+        return { out ->
+            variables.forEach {
+                out.appendLine("typedef int ${diagram.name}_${it}_t;")
+            }
+
+            objects.forEach {
+                out.appendLine("typedef int ${diagram.name}_${it}_t;")
+            }
+        }
     }
 
-    private fun closeIncludeGuards(out: StringBuilder) {
-        out.appendLine("#endif //${diagram.name.uppercase()}_CONFIG_HPP")
+    private fun defineVariablesInitialValue(diagram: Diagram, variables: Collection<String>): Assembler {
+        return { out ->
+            variables.forEach {
+                out.appendLine("#define ${diagram.name.uppercase()}_${it.uppercase()} 0")
+            }
+        }
+    }
+
+    private fun defineAdditionalAttributes(diagram: Diagram): Assembler {
+        return { out ->
+            out.appendLine("//if are unused can be safely deleted these two lines")
+            out.appendLine("#define ${diagram.name.uppercase()}_ADDITIONAL_PRIVATE_ATT void* foo_priv")
+            out.appendLine("#define ${diagram.name.uppercase()}_ADDITIONAL_PUBLIC_ATT void* foo_public")
+        }
+    }
+
+    private fun closeIncludeGuards(diagram: Diagram): Assembler {
+        return { out ->
+            out.appendLine("#endif //${diagram.name.uppercase()}_CONFIG_HPP")
+        }
     }
 
 }

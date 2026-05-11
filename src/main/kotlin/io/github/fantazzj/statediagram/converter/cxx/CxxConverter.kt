@@ -13,7 +13,6 @@ class CxxConverter(private val diagram: Diagram) {
     private val cppConverter = CppConverter(diagram)
     private val hppConverter = HppConverter(diagram)
     private val enumConverter = EnumConverter(diagram)
-    private val configConverter = ConfigConverter(diagram)
 
     fun saveToDir(outDir: Path) {
         if (!outDir.exists())
@@ -22,21 +21,21 @@ class CxxConverter(private val diagram: Diagram) {
         val cppFile = File("$outDir/${diagram.name}.cpp")
         cppFile.createNewFile()
         cppFile.printWriter().use {
-            it.print(cppConverter.convert())
+            it.print(cppConverter.convert(diagram))
             it.close()
         }
 
         val hppFile = File("$outDir/${diagram.name}.hpp")
         hppFile.createNewFile()
         hppFile.printWriter().use {
-            it.print(hppConverter.convert())
+            it.print(hppConverter.convert(diagram))
             it.close()
         }
 
         val enumFile = File("$outDir/${diagram.name}State.hpp")
         enumFile.createNewFile()
         enumFile.printWriter().use {
-            it.print(enumConverter.convert())
+            it.print(enumConverter.convert(diagram))
             it.close()
         }
 
@@ -44,7 +43,7 @@ class CxxConverter(private val diagram: Diagram) {
             val configFile = File("$outDir/${diagram.name}Config.hpp")
             configFile.createNewFile()
             configFile.printWriter().use {
-                it.print(configConverter.convert())
+                it.print(ConfigConverter.convert(diagram))
                 it.close()
             }
         }
