@@ -78,36 +78,26 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
         val leafs = diagram.currentGroup.leafs() +
                 diagram.groups().flatMap { it.leafs() }
 
-        val links = diagram.links.map {
-            if (it.isInverted) it.inv
-            else it
-        }
+        val links = diagram.links.map { if (it.isInverted) it.inv else it }
 
         if (verbose)
             plantUmlLog(links, leafs)
 
-        val states = ArrayList<State>()
-        leafs.forEach {
+        val states = leafs.map {
             val name = it.name
 
-            val actions = ArrayList<Action>()
-            it.bodier.rawBody.forEach {
-                actions.add(Action(it.toString()))
-            }
+            val actions = it.bodier.rawBody.map { Action(it.toString()) }
 
-            val transitions = ArrayList<Transition>()
-            links
+            val transitions = links
                 .filter { it.entity1.name == name }
-                .forEach {
-                    transitions.add(
-                        Transition(
-                            to = it.entity2.name,
-                            condition = if (it.label.size() > 0) it.label.get(0).toString() else "true"
-                        )
+                .map {
+                    Transition(
+                        to = it.entity2.name,
+                        condition = if (it.label.size() > 0) it.label.get(0).toString() else "true"
                     )
                 }
 
-            states.add(State(name, transitions, actions))
+            State(name, transitions, actions)
         }
 
         return states
