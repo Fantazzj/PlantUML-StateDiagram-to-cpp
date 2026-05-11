@@ -24,15 +24,15 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
             out.println()
             includeFiles(out)
             out.println()
-            out.println("class ${getName()} {")
-            out.println("public:")
+            openClass(out)
+            writePublic(out)
             publicMethods(out)
             publicAttributes(out)
             out.println()
-            out.println("private:")
+            writePrivate(out)
             privateMethods(out)
             privateAttributes(out)
-            out.println("};")
+            closeClass(out)
             out.println()
             includeGuardsBottom(out)
             out.close()
@@ -46,6 +46,14 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
     private fun includeFiles(out: PrintWriter) {
         out.println("#include \"${getName()}State.hpp\"")
         out.println("#include \"${getName()}Config.hpp\"")
+    }
+
+    private fun openClass(out: PrintWriter) {
+        out.println("class ${getName()} {")
+    }
+
+    private fun writePublic(out: PrintWriter) {
+        out.println("public:")
     }
 
     private fun publicMethods(out: PrintWriter) {
@@ -70,6 +78,10 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
         out.println("\t#endif")
     }
 
+    private fun writePrivate(out: PrintWriter) {
+        out.println("private:")
+    }
+
     private fun privateMethods(out: PrintWriter) {
         out.println("\tvoid changeState(${getName()}State step);")
     }
@@ -87,6 +99,10 @@ class HppConverter(name: String, states: Collection<State>) : Converter(name, st
         out.println("\t#ifdef ${getName().uppercase()}_ADDITIONAL_PRIVATE_ATT")
         out.println("\t${getName().uppercase()}_ADDITIONAL_PRIVATE_ATT")
         out.println("\t#endif")
+    }
+
+    private fun closeClass(out: PrintWriter) {
+        out.println("};")
     }
 
     private fun includeGuardsBottom(out: PrintWriter) {

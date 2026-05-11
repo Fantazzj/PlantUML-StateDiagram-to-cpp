@@ -20,8 +20,7 @@ class ConfigConverter(name: String, states: Collection<State>) : Converter(name,
 
     private fun addConfigContent(configFile: File) =
         configFile.printWriter().use { out ->
-            out.println("#ifndef ${getName().uppercase()}_CONFIG_HPP")
-            out.println("#define ${getName().uppercase()}_CONFIG_HPP")
+            openIncludeGuards(out)
             out.println()
             defineHardwareSpecific(out)
             out.println()
@@ -31,8 +30,13 @@ class ConfigConverter(name: String, states: Collection<State>) : Converter(name,
             out.println()
             defineAdditionalAttributes(out)
             out.println()
-            out.println("#endif //${getName().uppercase()}_CONFIG_HPP")
+            closeIncludeGuards(out)
         }
+
+    private fun openIncludeGuards(out: PrintWriter) {
+        out.println("#ifndef ${getName().uppercase()}_CONFIG_HPP")
+        out.println("#define ${getName().uppercase()}_CONFIG_HPP")
+    }
 
     private fun defineHardwareSpecific(out: PrintWriter) {
         out.println("//for arduino:")
@@ -62,6 +66,10 @@ class ConfigConverter(name: String, states: Collection<State>) : Converter(name,
         out.println("//if are unused can be safely deleted these two lines")
         out.println("#define ${getName().uppercase()}_ADDITIONAL_PRIVATE_ATT void* foo_priv")
         out.println("#define ${getName().uppercase()}_ADDITIONAL_PUBLIC_ATT void* foo_public")
+    }
+
+    private fun closeIncludeGuards(out: PrintWriter) {
+        out.println("#endif //${getName().uppercase()}_CONFIG_HPP")
     }
 
 }
