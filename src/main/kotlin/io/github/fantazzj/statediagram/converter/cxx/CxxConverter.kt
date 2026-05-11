@@ -3,6 +3,7 @@ package io.github.fantazzj.statediagram.converter.cxx
 import io.github.fantazzj.statediagram.converter.Converter
 import io.github.fantazzj.statediagram.structure.Diagram
 import io.github.fantazzj.statediagram.structure.State
+import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.createDirectory
@@ -15,12 +16,21 @@ class CxxConverter(diagram: Diagram) : Converter(diagram) {
     private val enumConverter = EnumConverter(diagram)
     private val configConverter = ConfigConverter(diagram)
 
-    override fun saveToDir(outDir: Path) {
+    fun saveToDir(outDir: Path) {
         if (!outDir.exists())
             outDir.createDirectory()
+
         cppConverter.saveToDir(outDir)
-        hppConverter.saveToDir(outDir)
+
+        val hppFile = File("$outDir/${getName()}.hpp")
+        hppFile.createNewFile()
+        hppFile.printWriter().use {
+            it.print(hppConverter.convert())
+            it.close()
+        }
+
         enumConverter.saveToDir(outDir)
+
         if (!Path(outDir.toString(), getName() + "Config.hpp").exists())
             configConverter.saveToDir(outDir)
     }

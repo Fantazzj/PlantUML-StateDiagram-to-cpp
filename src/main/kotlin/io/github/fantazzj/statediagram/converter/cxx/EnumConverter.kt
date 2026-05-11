@@ -8,7 +8,7 @@ import java.nio.file.Path
 
 class EnumConverter(diagram: Diagram) : Converter(diagram) {
 
-    override fun saveToDir(outDir: Path) {
+    fun saveToDir(outDir: Path) {
         val enumFile = File("$outDir/${getName()}State.hpp")
         enumFile.createNewFile()
         addEnumContent(enumFile)

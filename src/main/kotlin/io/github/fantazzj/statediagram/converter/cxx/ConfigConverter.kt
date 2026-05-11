@@ -12,7 +12,7 @@ class ConfigConverter(diagram: Diagram) : Converter(diagram) {
 
     private val objects = CxxConverter.getObjects(diagram.states)
 
-    override fun saveToDir(outDir: Path) {
+    fun saveToDir(outDir: Path) {
         val configFile = File("$outDir/${getName()}Config.hpp")
         configFile.createNewFile()
         addConfigContent(configFile)

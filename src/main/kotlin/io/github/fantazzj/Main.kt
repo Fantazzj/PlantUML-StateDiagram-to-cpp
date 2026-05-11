@@ -130,7 +130,7 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
         if (verbose)
             println("Converted files will be saved in: \"$outputDir\"")
 
-        val converter: Converter = CxxConverter(diagram)
+        val converter = CxxConverter(diagram)
         converter.saveToDir(outputDir)
 
         if (outputImage)

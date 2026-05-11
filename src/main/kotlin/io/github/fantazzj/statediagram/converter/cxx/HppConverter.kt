@@ -2,9 +2,6 @@ package io.github.fantazzj.statediagram.converter.cxx
 
 import io.github.fantazzj.statediagram.converter.Converter
 import io.github.fantazzj.statediagram.structure.Diagram
-import java.nio.file.Path
-import java.io.File
-import java.io.PrintWriter
 
 class HppConverter(diagram: Diagram) : Converter(diagram) {
 
@@ -12,101 +9,100 @@ class HppConverter(diagram: Diagram) : Converter(diagram) {
 
     private val objects = CxxConverter.getObjects(diagram.states)
 
-    override fun saveToDir(outDir: Path) {
-        val hppFile = File("$outDir/${getName()}.hpp")
-        hppFile.createNewFile()
-        addHppContent(hppFile)
+    fun convert(): String {
+        val out = StringBuilder()
+        addHppContent(out)
+        return out.toString()
     }
 
-    private fun addHppContent(hppFile: File) =
-        hppFile.printWriter().use { out ->
-            includeGuardsTop(out)
-            out.println()
-            includeFiles(out)
-            out.println()
-            openClass(out)
-            writePublic(out)
-            publicMethods(out)
-            publicAttributes(out)
-            out.println()
-            writePrivate(out)
-            privateMethods(out)
-            privateAttributes(out)
-            closeClass(out)
-            out.println()
-            includeGuardsBottom(out)
-            out.close()
-        }
-
-    private fun includeGuardsTop(out: PrintWriter) {
-        out.println("#ifndef ${getName().uppercase()}_HPP")
-        out.println("#define ${getName().uppercase()}_HPP")
+    private fun addHppContent(out: StringBuilder) {
+        out
+            .also(::includeGuardsTop)
+            .appendLine()
+            .also(::includeFiles)
+            .appendLine()
+            .also(::openClass)
+            .also(::writePublic)
+            .also(::publicMethods)
+            .also(::publicAttributes)
+            .appendLine()
+            .also(::writePrivate)
+            .also(::privateMethods)
+            .also(::privateAttributes)
+            .also(::closeClass)
+            .appendLine()
+            .also(::includeGuardsBottom)
     }
 
-    private fun includeFiles(out: PrintWriter) {
-        out.println("#include \"${getName()}State.hpp\"")
-        out.println("#include \"${getName()}Config.hpp\"")
+    private fun includeGuardsTop(out: StringBuilder) {
+        out.appendLine("#ifndef ${getName().uppercase()}_HPP")
+        out.appendLine("#define ${getName().uppercase()}_HPP")
     }
 
-    private fun openClass(out: PrintWriter) {
-        out.println("class ${getName()} {")
+    private fun includeFiles(out: StringBuilder) {
+        out.appendLine("#include \"${getName()}State.hpp\"")
+        out.appendLine("#include \"${getName()}Config.hpp\"")
     }
 
-    private fun writePublic(out: PrintWriter) {
-        out.println("public:")
+    private fun openClass(out: StringBuilder) {
+        out.appendLine("class ${getName()} {")
     }
 
-    private fun publicMethods(out: PrintWriter) {
-        out.print("\texplicit ${getName()}(Timer& timer")
+    private fun writePublic(out: StringBuilder) {
+        out.appendLine("public:")
+    }
+
+    private fun publicMethods(out: StringBuilder) {
+        out.append("\texplicit ${getName()}(Timer& timer")
         objects.forEach {
-            out.print(", ")
-            out.print("${getName()}_${it}_t $it")
+            out.append(", ")
+            out.append("${getName()}_${it}_t $it")
         }
-        out.println(");")
-        out.println("\tvoid autoCycle();")
-        out.println("\tvoid outputAnalysis();")
-        out.println("\t${getName()}State newState;")
+        out.appendLine(");")
+        out.appendLine("\tvoid autoCycle();")
+        out.appendLine("\tvoid outputAnalysis();")
+        out.appendLine("\t${getName()}State newState;")
     }
 
-    private fun publicAttributes(out: PrintWriter) {
+    private fun publicAttributes(out: StringBuilder) {
         variables.forEach {
-            out.println("\t${getName()}_${it}_t $it;")
+            out.appendLine("\t${getName()}_${it}_t $it;")
         }
 
-        out.println("\t#ifdef ${getName().uppercase()}_ADDITIONAL_PUBLIC_ATT")
-        out.println("\t${getName().uppercase()}_ADDITIONAL_PUBLIC_ATT")
-        out.println("\t#endif")
+        out.appendLine("\t#ifdef ${getName().uppercase()}_ADDITIONAL_PUBLIC_ATT")
+        out.appendLine("\t${getName().uppercase()}_ADDITIONAL_PUBLIC_ATT")
+        out.appendLine("\t#endif")
     }
 
-    private fun writePrivate(out: PrintWriter) {
-        out.println("private:")
+    private fun writePrivate(out: StringBuilder) {
+        out.appendLine("private:")
     }
 
-    private fun privateMethods(out: PrintWriter) {
-        out.println("\tvoid changeState(${getName()}State step);")
+    private fun privateMethods(out: StringBuilder) {
+        out.appendLine("\tvoid changeState(${getName()}State step);")
     }
 
-    private fun privateAttributes(out: PrintWriter) {
-        out.println("\t${getName()}State oldState;")
-        out.println("\tunsigned long previousMillis;")
-        out.println("\tunsigned long elapsedMillis;")
-        out.println("\tTimer& timer;")
+    private fun privateAttributes(out: StringBuilder) {
+        out.appendLine("\t${getName()}State oldState;")
+        out.appendLine("\tunsigned long previousMillis;")
+        out.appendLine("\tunsigned long elapsedMillis;")
+        out.appendLine("\tTimer& timer;")
 
         objects.forEach {
-            out.println("\t${getName()}_${it}_t $it;")
+            out.appendLine("\t${getName()}_${it}_t $it;")
         }
 
-        out.println("\t#ifdef ${getName().uppercase()}_ADDITIONAL_PRIVATE_ATT")
-        out.println("\t${getName().uppercase()}_ADDITIONAL_PRIVATE_ATT")
-        out.println("\t#endif")
+        out.appendLine("\t#ifdef ${getName().uppercase()}_ADDITIONAL_PRIVATE_ATT")
+        out.appendLine("\t${getName().uppercase()}_ADDITIONAL_PRIVATE_ATT")
+        out.appendLine("\t#endif")
     }
 
-    private fun closeClass(out: PrintWriter) {
-        out.println("};")
+    private fun closeClass(out: StringBuilder) {
+        out.appendLine("};")
     }
 
-    private fun includeGuardsBottom(out: PrintWriter) {
-        out.println("#endif//${getName().uppercase()}_HPP")
+    private fun includeGuardsBottom(out: StringBuilder) {
+        out.appendLine("#endif//${getName().uppercase()}_HPP")
     }
 
 }

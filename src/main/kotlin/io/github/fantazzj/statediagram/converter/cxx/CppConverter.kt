@@ -12,7 +12,7 @@ class CppConverter(diagram: Diagram) : Converter(diagram) {
 
     private val objects = CxxConverter.getObjects(diagram.states)
 
-    override fun saveToDir(outDir: Path) {
+    fun saveToDir(outDir: Path) {
         val cppFile = File("$outDir/${getName()}.cpp")
         cppFile.createNewFile()
         addCppContent(cppFile)
