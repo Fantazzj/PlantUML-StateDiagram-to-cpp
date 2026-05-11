@@ -3,9 +3,9 @@ package io.github.fantazzj.statediagram.converter.cxx
 import io.github.fantazzj.statediagram.converter.Converter
 import io.github.fantazzj.statediagram.structure.Diagram
 
-class EnumConverter(diagram: Diagram) : Converter(diagram) {
+class EnumConverter(private val diagram: Diagram) : Converter {
 
-    fun convert(): String {
+    override fun convert(): String {
         val out = StringBuilder()
         addEnumContent(out)
         return out.toString()
@@ -21,18 +21,18 @@ class EnumConverter(diagram: Diagram) : Converter(diagram) {
     }
 
     private fun openIncludeGuards(out: StringBuilder) {
-        out.appendLine("#ifndef ${getName().uppercase()}_ENUM_HPP")
-        out.appendLine("#define ${getName().uppercase()}_ENUM_HPP")
+        out.appendLine("#ifndef ${diagram.name.uppercase()}_ENUM_HPP")
+        out.appendLine("#define ${diagram.name.uppercase()}_ENUM_HPP")
     }
 
     private fun writeEnum(out: StringBuilder) {
-        out.appendLine("enum class ${getName()}State : int {")
-        getStates().forEach { out.appendLine("\t${it.name},") }
+        out.appendLine("enum class ${diagram.name}State : int {")
+        diagram.states.forEach { out.appendLine("\t${it.name},") }
         out.appendLine("};")
     }
 
     private fun closeIncludeGuards(out: StringBuilder) {
-        out.appendLine("#endif //${getName().uppercase()}_ENUM_HPP")
+        out.appendLine("#endif //${diagram.name.uppercase()}_ENUM_HPP")
     }
 
 }

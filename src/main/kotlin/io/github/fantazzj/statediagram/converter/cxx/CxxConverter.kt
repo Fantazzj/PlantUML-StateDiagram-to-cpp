@@ -1,6 +1,5 @@
 package io.github.fantazzj.statediagram.converter.cxx
 
-import io.github.fantazzj.statediagram.converter.Converter
 import io.github.fantazzj.statediagram.structure.Diagram
 import io.github.fantazzj.statediagram.structure.State
 import java.io.File
@@ -9,7 +8,7 @@ import kotlin.io.path.Path
 import kotlin.io.path.createDirectory
 import kotlin.io.path.exists
 
-class CxxConverter(diagram: Diagram) : Converter(diagram) {
+class CxxConverter(private val diagram: Diagram) {
 
     private val cppConverter = CppConverter(diagram)
     private val hppConverter = HppConverter(diagram)
@@ -20,29 +19,29 @@ class CxxConverter(diagram: Diagram) : Converter(diagram) {
         if (!outDir.exists())
             outDir.createDirectory()
 
-        val cppFile = File("$outDir/${getName()}.cpp")
+        val cppFile = File("$outDir/${diagram.name}.cpp")
         cppFile.createNewFile()
         cppFile.printWriter().use {
             it.print(cppConverter.convert())
             it.close()
         }
 
-        val hppFile = File("$outDir/${getName()}.hpp")
+        val hppFile = File("$outDir/${diagram.name}.hpp")
         hppFile.createNewFile()
         hppFile.printWriter().use {
             it.print(hppConverter.convert())
             it.close()
         }
 
-        val enumFile = File("$outDir/${getName()}State.hpp")
+        val enumFile = File("$outDir/${diagram.name}State.hpp")
         enumFile.createNewFile()
         enumFile.printWriter().use {
             it.print(enumConverter.convert())
             it.close()
         }
 
-        if (!Path(outDir.toString(), getName() + "Config.hpp").exists()) {
-            val configFile = File("$outDir/${getName()}Config.hpp")
+        if (!Path(outDir.toString(), diagram.name + "Config.hpp").exists()) {
+            val configFile = File("$outDir/${diagram.name}Config.hpp")
             configFile.createNewFile()
             configFile.printWriter().use {
                 it.print(configConverter.convert())
