@@ -1,12 +1,12 @@
 package io.github.fantazzj.statediagram.converter.cxx
 
 import io.github.fantazzj.statediagram.converter.Converter
-import io.github.fantazzj.statediagram.structure.State
+import io.github.fantazzj.statediagram.structure.Diagram
 import java.io.File
 import java.io.PrintWriter
 import java.nio.file.Path
 
-class EnumConverter(name: String, states: Collection<State>) : Converter(name, states) {
+class EnumConverter(diagram: Diagram) : Converter(diagram) {
 
     override fun saveToDir(outDir: Path) {
         val enumFile = File("$outDir/${getName()}State.hpp")

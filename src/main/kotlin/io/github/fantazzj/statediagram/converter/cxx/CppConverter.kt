@@ -1,16 +1,16 @@
 package io.github.fantazzj.statediagram.converter.cxx
 
 import io.github.fantazzj.statediagram.converter.Converter
-import io.github.fantazzj.statediagram.structure.State
+import io.github.fantazzj.statediagram.structure.Diagram
 import java.io.File
 import java.io.PrintWriter
 import java.nio.file.Path
 
-class CppConverter(name: String, states: Collection<State>) : Converter(name, states) {
+class CppConverter(diagram: Diagram) : Converter(diagram) {
 
-    private val variables = CxxConverter.getVariables(states)
+    private val variables = CxxConverter.getVariables(diagram.states)
 
-    private val objects = CxxConverter.getObjects(states)
+    private val objects = CxxConverter.getObjects(diagram.states)
 
     override fun saveToDir(outDir: Path) {
         val cppFile = File("$outDir/${getName()}.cpp")

@@ -1,18 +1,19 @@
 package io.github.fantazzj.statediagram.converter.cxx
 
 import io.github.fantazzj.statediagram.converter.Converter
+import io.github.fantazzj.statediagram.structure.Diagram
 import io.github.fantazzj.statediagram.structure.State
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.createDirectory
 import kotlin.io.path.exists
 
-class CxxConverter(name: String, states: Collection<State>) : Converter(name, states) {
+class CxxConverter(diagram: Diagram) : Converter(diagram) {
 
-    private val cppConverter = CppConverter(name, states)
-    private val hppConverter = HppConverter(name, states)
-    private val enumConverter = EnumConverter(name, states)
-    private val configConverter = ConfigConverter(name, states)
+    private val cppConverter = CppConverter(diagram)
+    private val hppConverter = HppConverter(diagram)
+    private val enumConverter = EnumConverter(diagram)
+    private val configConverter = ConfigConverter(diagram)
 
     override fun saveToDir(outDir: Path) {
         if (!outDir.exists())

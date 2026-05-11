@@ -1,19 +1,17 @@
 package io.github.fantazzj.statediagram.converter
 
-import io.github.fantazzj.statediagram.structure.State
+import io.github.fantazzj.statediagram.structure.Diagram
 import java.nio.file.Path
 import kotlin.system.exitProcess
 
-abstract class Converter(private val name: String, states: Collection<State>) {
+abstract class Converter(private val diagram: Diagram) {
 
-    private val states = states.filter { s -> !s.name.contains("*") }
+    private val states = diagram.states.filter { s -> !s.name.contains("*") }
 
     private val firstState =
         try {
-            states.first { s ->
-                s.name == states.first { ss ->
-                    ss.name == "*start*"
-                }.transitions.first().to
+            diagram.states.first {
+                it.name == diagram.states.first { it.name == "*start*" }.transitions.first().to
             }
         } catch (_: NoSuchElementException) {
             println("Error")
@@ -23,7 +21,7 @@ abstract class Converter(private val name: String, states: Collection<State>) {
 
     fun getFirstState() = firstState
 
-    fun getName() = name
+    fun getName() = diagram.name
 
     fun getStates() = states
 
