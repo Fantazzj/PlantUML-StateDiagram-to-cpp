@@ -2,7 +2,6 @@ package io.github.fantazzj.statediagram.converter
 
 import io.github.fantazzj.statediagram.structure.Diagram
 import java.nio.file.Path
-import kotlin.system.exitProcess
 
 abstract class Converter(private val diagram: Diagram) {
 

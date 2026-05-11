@@ -120,6 +120,8 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
             println("Converting ${diagram.name}")
             println("States in converter's view:")
             diagram.states.forEach(::println)
+            println("Whole diagram")
+            println(diagram)
         }
 
         val outputDir =

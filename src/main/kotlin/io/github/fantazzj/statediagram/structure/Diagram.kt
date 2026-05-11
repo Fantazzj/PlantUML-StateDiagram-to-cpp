@@ -1,7 +1,11 @@
 package io.github.fantazzj.statediagram.structure
 
-data class Diagram(val name: String, val states: Collection<State>) {
+class Diagram(val name: String, allStates: Collection<State>) {
 
-    val firstState = states.first { it.name == states.first { it.name == "*start*" }.transitions.first().to }
+    val firstState = allStates.first { it.name == allStates.first { it.name == "*start*" }.transitions.first().to }
+
+    val states = allStates.filterNot { it.name.contains("*") }
+
+    override fun toString() = "Diagram(name=$name, states=$states)"
 
 }
