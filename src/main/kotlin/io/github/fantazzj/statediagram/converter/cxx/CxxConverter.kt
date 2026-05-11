@@ -29,36 +29,32 @@ class CxxConverter(diagram: Diagram) : Converter(diagram) {
         private val parserRegex = Regex("\\b[a-z][\\w.]*")
 
         fun getVariables(states: Collection<State>): Collection<String> {
-            val variables = HashSet<String>()
-            val parseAndAdd = { text: String ->
-                parserRegex.findAll(text)
-                    .filter { it.value !in setOf("true", "false", "elapsedMillis") }
-                    .filter { !it.value.contains('.') }
-                    .forEach { variables.add(it.value) }
-            }
+            val strings =
+                states.flatMap { it.transitions }.map { it.condition } + states.flatMap { it.actions }.map { it.action }
 
-            states.forEach { s ->
-                s.transitions.forEach { t -> parseAndAdd(t.condition) }
-                s.actions.forEach { a -> parseAndAdd(a.action) }
-            }
+            val variables = strings
+                .asSequence()
+                .flatMap { parserRegex.findAll(it) }
+                .map { it.value }
+                .filter { it !in setOf("true", "false", "elapsedMillis") }
+                .filterNot { it.contains('.') }
+                .toHashSet()
 
             return variables
         }
 
         fun getObjects(states: Collection<State>): Collection<String> {
-            val objects = HashSet<String>()
-            val parseAndAdd = { text: String ->
-                parserRegex.findAll(text)
-                    .forEach {
-                        if (it.value.contains('.'))
-                            objects.add(it.value.split('.').first())
-                    }
-            }
+            val strings =
+                states.flatMap { it.transitions }.map { it.condition } + states.flatMap { it.actions }.map { it.action }
 
-            states.forEach { s ->
-                s.transitions.forEach { t -> parseAndAdd(t.condition) }
-                s.actions.forEach { a -> parseAndAdd(a.action) }
-            }
+            val objects = strings
+                .asSequence()
+                .flatMap { parserRegex.findAll(it) }
+                .map { it.value }
+                .filter { it !in setOf("true", "false", "elapsedMillis") }
+                .filter { it.contains('.') }
+                .map { it.split('.').first() }
+                .toHashSet()
 
             return objects
         }

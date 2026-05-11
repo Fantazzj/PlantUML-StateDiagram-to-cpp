@@ -7,6 +7,7 @@ hide empty description
 state Opening : handState = Open
 state Opening : statoMano = Aperto /' inline comment '/
 state Closing : handState = Grab
+state Fake : object.call()
 
 [*] -down-> Opening
 
