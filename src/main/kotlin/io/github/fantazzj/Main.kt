@@ -9,6 +9,7 @@ import com.github.ajalt.clikt.parameters.types.path
 import io.github.fantazzj.statediagram.converter.Converter
 import io.github.fantazzj.statediagram.converter.cxx.CxxConverter
 import io.github.fantazzj.statediagram.structure.Action
+import io.github.fantazzj.statediagram.structure.Diagram
 import io.github.fantazzj.statediagram.structure.State
 import io.github.fantazzj.statediagram.structure.Transition
 import net.sourceforge.plantuml.Previous
@@ -103,17 +104,22 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
         return states
     }
 
+    private fun assembleDiagram(states: Collection<State>) : Diagram {
+        val name = inputFile.name.replace(extensionRegex, "")
+        return Diagram(name, states)
+    }
+
     override fun run() {
-        val states = inputFile
+        val diagram = inputFile
             .let(::readFile)
             .let(::parsePlantUmlSource)
             .let(::convertPlantUmlDiagram)
+            .let(::assembleDiagram)
 
-        val diagramName = inputFile.name.replace(extensionRegex, "")
         if (verbose) {
-            println("Converting $diagramName")
+            println("Converting ${diagram.name}")
             println("States in converter's view:")
-            states.forEach(::println)
+            diagram.states.forEach(::println)
         }
 
         val outputDir =
@@ -122,7 +128,7 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
         if (verbose)
             println("Converted files will be saved in: \"$outputDir\"")
 
-        val converter: Converter = CxxConverter(diagramName, states)
+        val converter: Converter = CxxConverter(diagram.name, diagram.states)
         converter.saveToDir(outputDir)
 
         if (outputImage)
