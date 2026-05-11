@@ -20,7 +20,12 @@ class CxxConverter(diagram: Diagram) : Converter(diagram) {
         if (!outDir.exists())
             outDir.createDirectory()
 
-        cppConverter.saveToDir(outDir)
+        val cppFile = File("$outDir/${getName()}.cpp")
+        cppFile.createNewFile()
+        cppFile.printWriter().use {
+            it.print(cppConverter.convert())
+            it.close()
+        }
 
         val hppFile = File("$outDir/${getName()}.hpp")
         hppFile.createNewFile()
@@ -29,10 +34,21 @@ class CxxConverter(diagram: Diagram) : Converter(diagram) {
             it.close()
         }
 
-        enumConverter.saveToDir(outDir)
+        val enumFile = File("$outDir/${getName()}State.hpp")
+        enumFile.createNewFile()
+        enumFile.printWriter().use {
+            it.print(enumConverter.convert())
+            it.close()
+        }
 
-        if (!Path(outDir.toString(), getName() + "Config.hpp").exists())
-            configConverter.saveToDir(outDir)
+        if (!Path(outDir.toString(), getName() + "Config.hpp").exists()) {
+            val configFile = File("$outDir/${getName()}Config.hpp")
+            configFile.createNewFile()
+            configFile.printWriter().use {
+                it.print(configConverter.convert())
+                it.close()
+            }
+        }
     }
 
     companion object {

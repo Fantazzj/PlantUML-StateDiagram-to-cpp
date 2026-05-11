@@ -2,9 +2,6 @@ package io.github.fantazzj.statediagram.converter.cxx
 
 import io.github.fantazzj.statediagram.converter.Converter
 import io.github.fantazzj.statediagram.structure.Diagram
-import java.io.File
-import java.io.PrintWriter
-import java.nio.file.Path
 
 class CppConverter(diagram: Diagram) : Converter(diagram) {
 
@@ -12,97 +9,96 @@ class CppConverter(diagram: Diagram) : Converter(diagram) {
 
     private val objects = CxxConverter.getObjects(diagram.states)
 
-    fun saveToDir(outDir: Path) {
-        val cppFile = File("$outDir/${getName()}.cpp")
-        cppFile.createNewFile()
-        addCppContent(cppFile)
+    fun convert(): String {
+        val out = StringBuilder()
+        addCppContent(out)
+        return out.toString()
     }
 
-    private fun addCppContent(cppFile: File) =
-        cppFile.printWriter().use { out ->
-            writeInclude(out)
-            out.println()
-            writeConstructor(out)
-            out.println()
-            writeAutoCycle(out)
-            out.println()
-            writeOutputAnalysis(out)
-            out.println()
-            writeChangeState(out)
-            out.close()
-        }
-
-    private fun writeInclude(out: PrintWriter) {
-        out.println("#include \"${getName()}.hpp\"")
+    private fun addCppContent(out: StringBuilder) {
+        out
+            .also(::writeInclude)
+            .appendLine()
+            .also(::writeConstructor)
+            .appendLine()
+            .also(::writeAutoCycle)
+            .appendLine()
+            .also(::writeOutputAnalysis)
+            .appendLine()
+            .also(::writeChangeState)
     }
 
-    private fun writeOutputAnalysis(out: PrintWriter) {
-        out.println("void ${getName()}::outputAnalysis() {")
-        out.println("\toldState = newState;")
-        out.println("\tswitch(newState) {")
+    private fun writeInclude(out: StringBuilder) {
+        out.appendLine("#include \"${getName()}.hpp\"")
+    }
+
+    private fun writeOutputAnalysis(out: StringBuilder) {
+        out.appendLine("void ${getName()}::outputAnalysis() {")
+        out.appendLine("\toldState = newState;")
+        out.appendLine("\tswitch(newState) {")
         for (state in getStates()) {
-            out.println("\t\tcase ${getName()}State::${state.name}:")
+            out.appendLine("\t\tcase ${getName()}State::${state.name}:")
             for (action in state.actions)
-                out.println("\t\t\t${action.action};")
-            out.println("\t\t\tbreak;")
+                out.appendLine("\t\t\t${action.action};")
+            out.appendLine("\t\t\tbreak;")
         }
-        //out.println("\t\tdefault:")
-        out.println("\t}")
-        out.println("}")
+        //out.appendLine("\t\tdefault:")
+        out.appendLine("\t}")
+        out.appendLine("}")
     }
 
-    private fun writeConstructor(out: PrintWriter) {
-        out.print("${getName()}::${getName()}(Timer& timer")
+    private fun writeConstructor(out: StringBuilder) {
+        out.append("${getName()}::${getName()}(Timer& timer")
         objects.forEach { o ->
-            out.print(", ")
-            out.print("${getName()}_${o}_t $o")
+            out.append(", ")
+            out.append("${getName()}_${o}_t $o")
         }
-        out.print(") : timer(timer) ")
+        out.append(") : timer(timer) ")
         objects.forEach { o ->
-            out.print(", ")
-            out.print("$o($o)")
+            out.append(", ")
+            out.append("$o($o)")
         }
-        out.println("{")
-        out.println("\tthis->newState = ${getName()}State::${getFirstState().name};")
-        out.println("\tthis->oldState = ${getName()}State::${getFirstState().name};")
-        out.println("\tthis->elapsedMillis = 0;")
-        out.println("\tthis->previousMillis = 0;")
+        out.appendLine("{")
+        out.appendLine("\tthis->newState = ${getName()}State::${getFirstState().name};")
+        out.appendLine("\tthis->oldState = ${getName()}State::${getFirstState().name};")
+        out.appendLine("\tthis->elapsedMillis = 0;")
+        out.appendLine("\tthis->previousMillis = 0;")
         variables.forEach { v ->
-            out.println("\tthis->$v = ${getName().uppercase()}_${v.uppercase()};")
+            out.appendLine("\tthis->$v = ${getName().uppercase()}_${v.uppercase()};")
         }
-        out.println("}")
+        out.appendLine("}")
     }
 
-    private fun writeChangeState(out: PrintWriter) {
-        out.println("void ${getName()}::changeState(${getName()}State newState) {")
-        out.println("\tthis->newState = newState;")
-        out.println("\telapsedMillis = 0;")
-        out.println("\tpreviousMillis = timer.millis();")
-        out.println("}")
+    private fun writeChangeState(out: StringBuilder) {
+        out.appendLine("void ${getName()}::changeState(${getName()}State newState) {")
+        out.appendLine("\tthis->newState = newState;")
+        out.appendLine("\telapsedMillis = 0;")
+        out.appendLine("\tpreviousMillis = timer.millis();")
+        out.appendLine("}")
     }
 
-    private fun writeAutoCycle(out: PrintWriter) {
-        out.println("void ${getName()}::autoCycle() {")
-        out.println("\telapsedMillis = timer.millis() - previousMillis;")
-        out.println("\tswitch(newState) {")
+    private fun writeAutoCycle(out: StringBuilder) {
+        out.appendLine("void ${getName()}::autoCycle() {")
+        out.appendLine("\telapsedMillis = timer.millis() - previousMillis;")
+        out.appendLine("\tswitch(newState) {")
         for (state in getStates()) {
-            out.println("\t\tcase ${getName()}State::${state.name}:")
+            out.appendLine("\t\tcase ${getName()}State::${state.name}:")
             if (state.transitions.isEmpty())
-                out.println("\t\t\tbreak;")
+                out.appendLine("\t\t\tbreak;")
             else for (transition in state.transitions) {
                 if (transition.condition == "true") {
-                    out.println("\t\t\tchangeState(${getName()}State::${transition.to});")
+                    out.appendLine("\t\t\tchangeState(${getName()}State::${transition.to});")
                 } else {
-                    out.println("\t\t\tif(${transition.condition}) {")
-                    out.println("\t\t\t\tchangeState(${getName()}State::${transition.to});")
-                    out.println("\t\t\t\tbreak;")
-                    out.println("\t\t\t}")
+                    out.appendLine("\t\t\tif(${transition.condition}) {")
+                    out.appendLine("\t\t\t\tchangeState(${getName()}State::${transition.to});")
+                    out.appendLine("\t\t\t\tbreak;")
+                    out.appendLine("\t\t\t}")
                 }
             }
-            out.println("\t\t\tbreak;")
+            out.appendLine("\t\t\tbreak;")
         }
-        out.println("\t}")
-        out.println("}")
+        out.appendLine("\t}")
+        out.appendLine("}")
     }
 
 }
