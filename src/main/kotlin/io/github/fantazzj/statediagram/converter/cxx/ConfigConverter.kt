@@ -57,7 +57,7 @@ object ConfigConverter : Converter {
     private fun defineAdditionalAttributes(diagram: Diagram): CodeAssembler {
         return { s ->
             s + listOf(
-                "//if are unused can be safely deleted these two lines",
+                "//if unused can be safely deleted",
                 "#define ${diagram.name.uppercase()}_ADDITIONAL_PRIVATE_ATT void* foo_priv",
                 "#define ${diagram.name.uppercase()}_ADDITIONAL_PUBLIC_ATT void* foo_public",
             ).joinToString("\n") + "\n"
