@@ -10,10 +10,12 @@ object ConfigConverter : Converter {
         val variables = CxxConverter.getVariables(diagram.states)
         val objects = CxxConverter.getObjects(diagram.states)
 
-        return getConfigContent(diagram, variables, objects)
+        val addCode = getConverter(diagram, variables, objects)
+
+        return addCode("")
     }
 
-    private fun getConfigContent(diagram: Diagram, variables: Collection<String>, objects: Collection<String>): String {
+    private fun getConverter(diagram: Diagram, variables: Collection<String>, objects: Collection<String>): CodeAssembler {
         val assemblers = listOf(
             openIncludeGuards(diagram),
             defineVariablesTypes(diagram, variables, objects),
@@ -24,7 +26,7 @@ object ConfigConverter : Converter {
 
         val converter = assemblers.reduce { f1, f2 -> { s -> f2(f1(s) + "\n") } }
 
-        return converter("")
+        return converter
     }
 
     private val newLine: CodeAssembler = { s -> s + "\n" }
