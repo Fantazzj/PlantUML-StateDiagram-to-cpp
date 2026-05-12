@@ -14,21 +14,20 @@ object ConfigConverter : Converter {
     }
 
     private fun getConfigContent(diagram: Diagram, variables: Collection<String>, objects: Collection<String>): String {
-        return ""
-            .let(openIncludeGuards(diagram))
-            .let(newLine())
-            .let(defineVariablesTypes(diagram, variables, objects))
-            .let(newLine())
-            .let(defineVariablesInitialValue(diagram, variables))
-            .let(newLine())
-            .let(defineAdditionalAttributes(diagram))
-            .let(newLine())
-            .let(closeIncludeGuards(diagram))
+        val assemblers = listOf(
+            openIncludeGuards(diagram),
+            defineVariablesTypes(diagram, variables, objects),
+            defineVariablesInitialValue(diagram, variables),
+            defineAdditionalAttributes(diagram),
+            closeIncludeGuards(diagram),
+        )
+
+        val converter = assemblers.reduce { f1, f2 -> { s -> f2(f1(s) + "\n") } }
+
+        return converter("")
     }
 
-    private fun newLine(): CodeAssembler {
-        return { s -> s + "\n" }
-    }
+    private val newLine: CodeAssembler = { s -> s + "\n" }
 
     private fun openIncludeGuards(diagram: Diagram): CodeAssembler {
         return { s ->
