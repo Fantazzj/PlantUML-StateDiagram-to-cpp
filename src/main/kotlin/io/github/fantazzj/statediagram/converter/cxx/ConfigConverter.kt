@@ -19,8 +19,6 @@ object ConfigConverter : Converter {
         return StringBuilder()
             .also(openIncludeGuards(diagram))
             .appendLine()
-            .also(defineHardwareSpecific(diagram))
-            .appendLine()
             .also(defineVariablesTypes(diagram, variables, objects))
             .appendLine()
             .also(defineVariablesInitialValue(diagram, variables))
@@ -34,16 +32,6 @@ object ConfigConverter : Converter {
         return { out ->
             out.appendLine("#ifndef ${diagram.name.uppercase()}_CONFIG_HPP")
             out.appendLine("#define ${diagram.name.uppercase()}_CONFIG_HPP")
-        }
-    }
-
-    private fun defineHardwareSpecific(diagram: Diagram): Assembler {
-        return { out ->
-            out.appendLine("//for arduino:")
-            out.appendLine("//#define ${diagram.name.uppercase()}_MILLISECONDS millis()")
-            out.appendLine("#ifndef ${diagram.name.uppercase()}_MILLISECONDS")
-            out.appendLine("#error \"didn't define the hardware specific ${diagram.name.uppercase()}_MILLISECONDS function\"")
-            out.appendLine("#endif")
         }
     }
 
