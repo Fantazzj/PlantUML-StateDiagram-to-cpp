@@ -29,8 +29,6 @@ object ConfigConverter : Converter {
         return converter
     }
 
-    private val newLine: CodeAssembler = { s -> s + "\n" }
-
     private fun openIncludeGuards(diagram: Diagram): CodeAssembler {
         return { s ->
             s + listOf(
