@@ -12,7 +12,6 @@ class CxxConverter(private val diagram: Diagram) {
 
     private val cppConverter = CppConverter(diagram)
     private val hppConverter = HppConverter(diagram)
-    private val enumConverter = EnumConverter(diagram)
 
     fun saveToDir(outDir: Path) {
         if (!outDir.exists())
@@ -35,7 +34,7 @@ class CxxConverter(private val diagram: Diagram) {
         val enumFile = File("$outDir/${diagram.name}State.hpp")
         enumFile.createNewFile()
         enumFile.printWriter().use {
-            it.print(enumConverter.convert(diagram))
+            it.print(EnumConverter.convert(diagram))
             it.close()
         }
 
