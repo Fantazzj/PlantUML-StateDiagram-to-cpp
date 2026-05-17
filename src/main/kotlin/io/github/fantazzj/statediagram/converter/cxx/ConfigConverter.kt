@@ -1,6 +1,7 @@
 package io.github.fantazzj.statediagram.converter.cxx
 
 import io.github.fantazzj.statediagram.converter.CodeAssembler
+import io.github.fantazzj.statediagram.converter.CodeConverter
 import io.github.fantazzj.statediagram.converter.Converter
 import io.github.fantazzj.statediagram.structure.Diagram
 
@@ -10,12 +11,12 @@ object ConfigConverter : Converter {
         val variables = CxxConverter.getVariables(diagram.states)
         val objects = CxxConverter.getObjects(diagram.states)
 
-        val addCode = getConverter(diagram, variables, objects)
+        val converter = getConverter(diagram, variables, objects)
 
-        return addCode("")
+        return converter()
     }
 
-    private fun getConverter(diagram: Diagram, variables: Collection<String>, objects: Collection<String>): CodeAssembler {
+    private fun getConverter(diagram: Diagram, variables: Collection<String>, objects: Collection<String>): CodeConverter {
         val assemblers = listOf(
             openIncludeGuards(diagram),
             defineVariablesTypes(diagram, variables, objects),
@@ -24,9 +25,9 @@ object ConfigConverter : Converter {
             closeIncludeGuards(diagram),
         )
 
-        val converter = assemblers.reduce { f1, f2 -> { s -> f2(f1(s) + "\n") } }
+        val addCode = assemblers.reduce { f1, f2 -> { s -> f2(f1(s) + "\n") } }
 
-        return converter
+        return { addCode("") }
     }
 
     private fun openIncludeGuards(diagram: Diagram): CodeAssembler {

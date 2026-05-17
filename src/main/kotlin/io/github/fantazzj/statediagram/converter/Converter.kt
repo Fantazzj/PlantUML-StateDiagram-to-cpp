@@ -3,6 +3,7 @@ package io.github.fantazzj.statediagram.converter
 import io.github.fantazzj.statediagram.structure.Diagram
 
 typealias CodeAssembler = (String) -> String
+typealias CodeConverter = () -> String
 
 interface Converter {
 
