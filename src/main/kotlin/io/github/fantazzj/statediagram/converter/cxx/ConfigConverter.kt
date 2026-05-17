@@ -41,17 +41,13 @@ object ConfigConverter : Converter {
 
     private fun defineVariablesTypes(diagram: Diagram, variables: Collection<String>, objects: Collection<String>): CodeAssembler {
         return { s ->
-            s + (variables + objects)
-                .map { "typedef int ${diagram.name}_${it}_t;" }
-                .joinToString("\n") + "\n"
+            s + (variables + objects).joinToString("\n") { "typedef int ${diagram.name}_${it}_t;" } + "\n"
         }
     }
 
     private fun defineVariablesInitialValue(diagram: Diagram, variables: Collection<String>): CodeAssembler {
         return { s ->
-            s + variables
-                .map { "typedef int ${diagram.name}_${it}_t;" }
-                .joinToString("\n") + "\n"
+            s + variables.joinToString("\n") { "typedef int ${diagram.name}_${it}_t;" } + "\n"
         }
     }
 
