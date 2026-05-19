@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.org.apache.commons.lang3.SystemUtils.IS_OS_LINUX
+import org.jetbrains.kotlin.org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS
+
 plugins {
     java
     application
@@ -77,34 +80,38 @@ tasks.withType<Jar> {
     }
 }
 
-tasks.register<Zip>("createReleaseWindows") {
-    group = "releases"
-    dependsOn("createExe", "jre")
-    from("LICENSE", "README.md")
-    from("build/launch4j/")
-    include("**")
-    into("jre") {
-        from("build/jre")
+if (IS_OS_WINDOWS)
+    tasks.register<Zip>("createReleaseWindows") {
+        description = "Create the release file for windows platform, includes jre and launch4j executable"
+        group = "releases"
+        dependsOn("createExe", "jre")
+        from("LICENSE", "README.md")
+        from("build/launch4j/")
         include("**")
+        into("jre") {
+            from("build/jre")
+            include("**")
+        }
+        archiveFileName = "PlantUML-StateDiagram-to-cpp-windows.zip"
+        destinationDirectory = file("build/releases")
     }
-    archiveFileName = "PlantUML-StateDiagram-to-cpp-windows.zip"
-    destinationDirectory = file("build/releases")
-}
 
-tasks.register<Tar>("createReleaseLinux") {
-    group = "releases"
-    dependsOn("installDist", "jre")
-    from("LICENSE", "README.md")
-    from("build/install/plantuml-statediagram-to-cpp/lib")
-    include("**")
-    into("jre") {
-        from("build/jre")
+if (IS_OS_LINUX)
+    tasks.register<Tar>("createReleaseLinux") {
+        description = "Create the release file for linux platform, includes jre"
+        group = "releases"
+        dependsOn("installDist", "jre")
+        from("LICENSE", "README.md")
+        from("build/install/plantuml-statediagram-to-cpp/lib")
         include("**")
+        into("jre") {
+            from("build/jre")
+            include("**")
+        }
+        compression = Compression.GZIP
+        archiveFileName = "PlantUML-StateDiagram-to-cpp-linux.tar.gz"
+        destinationDirectory = file("build/releases")
     }
-    compression = Compression.GZIP
-    archiveFileName = "PlantUML-StateDiagram-to-cpp-linux.tar.gz"
-    destinationDirectory = file("build/releases")
-}
 
 val distZip by tasks
 distZip.enabled = false
