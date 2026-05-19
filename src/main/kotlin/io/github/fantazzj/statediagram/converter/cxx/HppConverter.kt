@@ -67,9 +67,9 @@ object HppConverter : Converter {
     }
 
     private fun writeConstructor(diagram: Diagram, objects: Collection<String>): CodeAssembler {
-        val args = listOf("Timer& timer") + objects.map { "${diagram.name}_${it}_t $it" }
+        val args = (listOf("Timer& timer") + objects.map { "${diagram.name}_${it}_t $it" }).joinToString(", ")
         return { s ->
-            s + "\texplicit ${diagram.name}(${args.joinToString(", ")});" + "\n"
+            s + "\texplicit ${diagram.name}(${args});" + "\n"
         }
     }
 
