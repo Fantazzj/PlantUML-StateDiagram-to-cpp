@@ -11,7 +11,6 @@ import kotlin.io.path.exists
 class CxxConverter(private val diagram: Diagram) {
 
     private val cppConverter = CppConverter(diagram)
-    private val hppConverter = HppConverter(diagram)
 
     fun saveToDir(outDir: Path) {
         if (!outDir.exists())
@@ -27,7 +26,7 @@ class CxxConverter(private val diagram: Diagram) {
         val hppFile = File("$outDir/${diagram.name}.hpp")
         hppFile.createNewFile()
         hppFile.printWriter().use {
-            it.print(hppConverter.convert(diagram))
+            it.print(HppConverter.convert(diagram))
             it.close()
         }
 

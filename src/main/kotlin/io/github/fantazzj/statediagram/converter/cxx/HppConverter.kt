@@ -1,108 +1,149 @@
 package io.github.fantazzj.statediagram.converter.cxx
 
+import io.github.fantazzj.statediagram.converter.CodeAssembler
+import io.github.fantazzj.statediagram.converter.CodeConverter
 import io.github.fantazzj.statediagram.converter.Converter
 import io.github.fantazzj.statediagram.structure.Diagram
 
-class HppConverter(private val diagram: Diagram) : Converter {
-
-    private val variables = CxxConverter.getVariables(diagram.states)
-
-    private val objects = CxxConverter.getObjects(diagram.states)
+object HppConverter : Converter {
 
     override fun convert(diagram: Diagram): String {
-        val out = StringBuilder()
-        addHppContent(out)
-        return out.toString()
+        val variables = CxxConverter.getVariables(diagram.states)
+        val objects = CxxConverter.getObjects(diagram.states)
+
+        val converter = getConverter(diagram, variables, objects)
+
+        return converter()
     }
 
-    private fun addHppContent(out: StringBuilder) {
-        out
-            .also(::includeGuardsTop)
-            .appendLine()
-            .also(::includeFiles)
-            .appendLine()
-            .also(::openClass)
-            .also(::writePublic)
-            .also(::publicMethods)
-            .also(::publicAttributes)
-            .appendLine()
-            .also(::writePrivate)
-            .also(::privateMethods)
-            .also(::privateAttributes)
-            .also(::closeClass)
-            .appendLine()
-            .also(::includeGuardsBottom)
+    private fun getConverter(diagram: Diagram, variables: Collection<String>, objects: Collection<String>): CodeConverter {
+        val assemblers = listOf(
+            openIncludeGuards(diagram),
+            includeFiles(diagram),
+            openClass(diagram),
+            writePublic(),
+            writeConstructor(diagram, objects),
+            writePublicMethods(diagram),
+            writePublicVariables(diagram, variables),
+            writeAdditionalPublicAttributes(diagram),
+            writePrivate(),
+            writePrivateMethods(diagram),
+            writeGeneralPrivateAttributes(diagram),
+            writePrivateObjects(diagram, objects),
+            writeAdditionalPrivateAttributes(diagram),
+            closeClass(),
+            closeIncludeGuards(diagram),
+        )
+
+        val addCode = assemblers.reduce { f1, f2 -> { s -> f2(f1(s) + "\n") } }
+
+        return { addCode("") }
     }
 
-    private fun includeGuardsTop(out: StringBuilder) {
-        out.appendLine("#ifndef ${diagram.name.uppercase()}_HPP")
-        out.appendLine("#define ${diagram.name.uppercase()}_HPP")
-    }
-
-    private fun includeFiles(out: StringBuilder) {
-        out.appendLine("#include \"${diagram.name}State.hpp\"")
-        out.appendLine("#include \"${diagram.name}Config.hpp\"")
-    }
-
-    private fun openClass(out: StringBuilder) {
-        out.appendLine("class ${diagram.name} {")
-    }
-
-    private fun writePublic(out: StringBuilder) {
-        out.appendLine("public:")
-    }
-
-    private fun publicMethods(out: StringBuilder) {
-        out.append("\texplicit ${diagram.name}(Timer& timer")
-        objects.forEach {
-            out.append(", ")
-            out.append("${diagram.name}_${it}_t $it")
+    private fun openIncludeGuards(diagram: Diagram): CodeAssembler {
+        return { s ->
+            s + listOf(
+                "#ifndef ${diagram.name.uppercase()}_HPP",
+                "#define ${diagram.name.uppercase()}_HPP",
+            ).joinToString("\n") + "\n"
         }
-        out.appendLine(");")
-        out.appendLine("\tvoid autoCycle();")
-        out.appendLine("\tvoid outputAnalysis();")
-        out.appendLine("\t${diagram.name}State newState;")
     }
 
-    private fun publicAttributes(out: StringBuilder) {
-        variables.forEach {
-            out.appendLine("\t${diagram.name}_${it}_t $it;")
+    private fun includeFiles(diagram: Diagram): CodeAssembler {
+        return { s ->
+            s + listOf(
+                "#include \"${diagram.name}State.hpp\"",
+                "#include \"${diagram.name}Config.hpp\"",
+            ).joinToString("\n") + "\n"
         }
-
-        out.appendLine("\t#ifdef ${diagram.name.uppercase()}_ADDITIONAL_PUBLIC_ATT")
-        out.appendLine("\t${diagram.name.uppercase()}_ADDITIONAL_PUBLIC_ATT")
-        out.appendLine("\t#endif")
     }
 
-    private fun writePrivate(out: StringBuilder) {
-        out.appendLine("private:")
+    private fun openClass(diagram: Diagram): CodeAssembler {
+        return { s -> s + "class ${diagram.name} {" + "\n" }
     }
 
-    private fun privateMethods(out: StringBuilder) {
-        out.appendLine("\tvoid changeState(${diagram.name}State step);")
+    private fun writePublic(): CodeAssembler {
+        return { s -> s + "public:" + "\n" }
     }
 
-    private fun privateAttributes(out: StringBuilder) {
-        out.appendLine("\t${diagram.name}State oldState;")
-        out.appendLine("\tunsigned long previousMillis;")
-        out.appendLine("\tunsigned long elapsedMillis;")
-        out.appendLine("\tTimer& timer;")
-
-        objects.forEach {
-            out.appendLine("\t${diagram.name}_${it}_t $it;")
+    private fun writeConstructor(diagram: Diagram, objects: Collection<String>): CodeAssembler {
+        val args = listOf("Timer& timer") + objects.map { "${diagram.name}_${it}_t $it" }
+        return { s ->
+            s + "\texplicit ${diagram.name}(${args.joinToString(", ")});" + "\n"
         }
-
-        out.appendLine("\t#ifdef ${diagram.name.uppercase()}_ADDITIONAL_PRIVATE_ATT")
-        out.appendLine("\t${diagram.name.uppercase()}_ADDITIONAL_PRIVATE_ATT")
-        out.appendLine("\t#endif")
     }
 
-    private fun closeClass(out: StringBuilder) {
-        out.appendLine("};")
+    private fun writePublicMethods(diagram: Diagram): CodeAssembler {
+        return { s ->
+            s + listOf(
+                "\tvoid autoCycle();",
+                "\tvoid outputAnalysis();",
+                "\t${diagram.name}State newState;",
+            ).joinToString("\n") + "\n"
+        }
     }
 
-    private fun includeGuardsBottom(out: StringBuilder) {
-        out.appendLine("#endif//${diagram.name.uppercase()}_HPP")
+    private fun writePublicVariables(diagram: Diagram, variables: Collection<String>): CodeAssembler {
+        return { s ->
+            s + variables.joinToString("\n") { "\t${diagram.name}_${it}_t $it;" } + "\n"
+        }
+    }
+
+    private fun writeAdditionalPublicAttributes(diagram: Diagram): CodeAssembler {
+        return { s ->
+            s + listOf(
+                "\t#ifdef ${diagram.name.uppercase()}_ADDITIONAL_PUBLIC_ATT",
+                "\t${diagram.name.uppercase()}_ADDITIONAL_PUBLIC_ATT",
+                "\t#endif",
+            ).joinToString("\n") + "\n"
+        }
+    }
+
+    private fun writePrivate(): CodeAssembler {
+        return { s -> s + "private:" + "\n" }
+    }
+
+    private fun writePrivateMethods(diagram: Diagram): CodeAssembler {
+        return { s ->
+            s + "\tvoid changeState(${diagram.name}State step);" + "\n"
+        }
+    }
+
+    private fun writeGeneralPrivateAttributes(diagram: Diagram): CodeAssembler {
+        return { s ->
+            s + listOf(
+                "\t${diagram.name}State oldState;",
+                "\tunsigned long previousMillis;",
+                "\tunsigned long elapsedMillis;",
+                "\tTimer& timer;",
+            ).joinToString("\n") + "\n"
+        }
+    }
+
+    private fun writePrivateObjects(diagram: Diagram, objects: Collection<String>): CodeAssembler {
+        return { s ->
+            s + objects.joinToString { "\t${diagram.name}_${it}_t $it;" } + "\n"
+        }
+    }
+
+    private fun writeAdditionalPrivateAttributes(diagram: Diagram): CodeAssembler {
+        return { s ->
+            s + listOf(
+                "\t#ifdef ${diagram.name.uppercase()}_ADDITIONAL_PRIVATE_ATT",
+                "\t${diagram.name.uppercase()}_ADDITIONAL_PRIVATE_ATT",
+                "\t#endif",
+            ).joinToString("\n") + "\n"
+        }
+    }
+
+    private fun closeClass(): CodeAssembler {
+        return { s -> s + "};" + "\n" }
+    }
+
+    private fun closeIncludeGuards(diagram: Diagram): CodeAssembler {
+        return { s ->
+            s + "#endif//${diagram.name.uppercase()}_HPP" + "\n"
+        }
     }
 
 }
