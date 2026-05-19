@@ -15,7 +15,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("net.sourceforge.plantuml:plantuml:1.2025.2")
+    implementation("net.sourceforge.plantuml:plantuml:1.2026.0")
     implementation("com.github.ajalt.clikt:clikt:5.0.2")
 }
 

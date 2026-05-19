@@ -1,19 +1,19 @@
 package io.github.fantazzj
 
-import com.github.ajalt.clikt.core.*
+import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.core.main
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.check
-import com.github.ajalt.clikt.parameters.options.*
+import com.github.ajalt.clikt.parameters.options.flag
+import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.file
 import com.github.ajalt.clikt.parameters.types.path
-import io.github.fantazzj.statediagram.converter.Converter
 import io.github.fantazzj.statediagram.converter.cxx.CxxConverter
 import io.github.fantazzj.statediagram.structure.Action
 import io.github.fantazzj.statediagram.structure.Diagram
 import io.github.fantazzj.statediagram.structure.State
 import io.github.fantazzj.statediagram.structure.Transition
 import net.sourceforge.plantuml.Previous
-import net.sourceforge.plantuml.Run as PlantUmlJar
 import net.sourceforge.plantuml.abel.Entity
 import net.sourceforge.plantuml.abel.Link
 import net.sourceforge.plantuml.core.UmlSource
@@ -25,6 +25,7 @@ import net.sourceforge.plantuml.statediagram.StateDiagramFactory
 import net.sourceforge.plantuml.text.StringLocated
 import java.io.File
 import java.nio.file.Paths
+import net.sourceforge.plantuml.Run as PlantUmlJar
 
 class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
 
@@ -32,7 +33,8 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
 
     private val inputFile by argument(help = "input PlantUML file (needs correct extension)").file(
         mustExist = true,
-        canBeDir = false
+        canBeDir = false,
+        mustBeReadable = true,
     ).check { it.name.contains(extensionRegex) }
     private val verbose by option("-v", "--verbose", help = "print all information").flag()
     private val outputImage by option("--image", help = "create also a png image of the diagram").flag()
@@ -57,7 +59,7 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
 
     private fun parsePlantUmlSource(source: List<StringLocated>): StateDiagram {
         val umlSource = UmlSource.create(source, false)
-        val diagram = StateDiagramFactory().createSystem(umlSource, Previous.createEmpty(), PreprocessingArtifact())
+        val diagram = StateDiagramFactory().createSystem(null, umlSource, Previous.createEmpty(), PreprocessingArtifact())
         if (diagram !is StateDiagram)
             throw Exception("Given PlantUML is not a StateDiagram")
         return diagram
