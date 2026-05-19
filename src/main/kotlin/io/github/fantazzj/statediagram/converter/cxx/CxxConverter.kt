@@ -10,8 +10,6 @@ import kotlin.io.path.exists
 
 class CxxConverter(private val diagram: Diagram) {
 
-    private val cppConverter = CppConverter(diagram)
-
     fun saveToDir(outDir: Path) {
         if (!outDir.exists())
             outDir.createDirectory()
@@ -19,7 +17,7 @@ class CxxConverter(private val diagram: Diagram) {
         val cppFile = File("$outDir/${diagram.name}.cpp")
         cppFile.createNewFile()
         cppFile.printWriter().use {
-            it.print(cppConverter.convert(diagram))
+            it.print(CppConverter.convert(diagram))
             it.close()
         }
 
