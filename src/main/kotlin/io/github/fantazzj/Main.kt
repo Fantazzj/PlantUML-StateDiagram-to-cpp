@@ -104,7 +104,7 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
         return states
     }
 
-    private fun assembleDiagram(states: Collection<State>) : Diagram {
+    private fun assembleDiagram(states: Collection<State>): Diagram {
         val name = inputFile.name.replace(extensionRegex, "")
         return Diagram(name, states)
     }
@@ -130,8 +130,7 @@ class Main : CliktCommand(name = "PlantUML-StateMachine-to-cpp") {
         if (verbose)
             println("Converted files will be saved in: \"$outputDir\"")
 
-        val converter = CxxConverter(diagram)
-        converter.saveToDir(outputDir)
+        CxxConverter.saveToDir(diagram, outputDir)
 
         if (outputImage)
             PlantUmlJar.main(arrayOf(inputFile.absolutePath, "-o", outputDir.toString()))

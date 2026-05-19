@@ -8,9 +8,9 @@ import kotlin.io.path.Path
 import kotlin.io.path.createDirectory
 import kotlin.io.path.exists
 
-class CxxConverter(private val diagram: Diagram) {
+object CxxConverter {
 
-    fun saveToDir(outDir: Path) {
+    fun saveToDir(diagram: Diagram, outDir: Path) {
         if (!outDir.exists())
             outDir.createDirectory()
 
@@ -45,39 +45,36 @@ class CxxConverter(private val diagram: Diagram) {
         }
     }
 
-    companion object {
-        private val parserRegex = Regex("\\b[a-z][\\w.]*")
+    private val parserRegex = Regex("\\b[a-z][\\w.]*")
 
-        fun getVariables(states: Collection<State>): Collection<String> {
-            val strings =
-                states.flatMap { it.transitions }.map { it.condition } + states.flatMap { it.actions }.map { it.action }
+    fun getVariables(states: Collection<State>): Collection<String> {
+        val strings =
+            states.flatMap { it.transitions }.map { it.condition } + states.flatMap { it.actions }.map { it.action }
 
-            val variables = strings
-                .asSequence()
-                .flatMap { parserRegex.findAll(it) }
-                .map { it.value }
-                .filter { it !in setOf("true", "false", "elapsedMillis") }
-                .filterNot { it.contains('.') }
-                .toHashSet()
+        val variables = strings
+            .asSequence()
+            .flatMap { parserRegex.findAll(it) }
+            .map { it.value }
+            .filter { it !in setOf("true", "false", "elapsedMillis") }
+            .filterNot { it.contains('.') }
+            .toHashSet()
 
-            return variables
-        }
-
-        fun getObjects(states: Collection<State>): Collection<String> {
-            val strings =
-                states.flatMap { it.transitions }.map { it.condition } + states.flatMap { it.actions }.map { it.action }
-
-            val objects = strings
-                .asSequence()
-                .flatMap { parserRegex.findAll(it) }
-                .map { it.value }
-                .filter { it !in setOf("true", "false", "elapsedMillis") }
-                .filter { it.contains('.') }
-                .map { it.split('.').first() }
-                .toHashSet()
-
-            return objects
-        }
+        return variables
     }
 
+    fun getObjects(states: Collection<State>): Collection<String> {
+        val strings =
+            states.flatMap { it.transitions }.map { it.condition } + states.flatMap { it.actions }.map { it.action }
+
+        val objects = strings
+            .asSequence()
+            .flatMap { parserRegex.findAll(it) }
+            .map { it.value }
+            .filter { it !in setOf("true", "false", "elapsedMillis") }
+            .filter { it.contains('.') }
+            .map { it.split('.').first() }
+            .toHashSet()
+
+        return objects
+    }
 }
